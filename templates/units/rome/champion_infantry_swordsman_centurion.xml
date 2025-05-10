@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entity parent="template_unit_champion_infantry_swordsman">
+  <Auras datatype="tokens">
+    units/centurion_1
+    units/centurion_2
+  </Auras>
+  <Cost>
+    <BuildTime op="mul">1.25</BuildTime>
+    <Resources>
+      <food op="add">40</food>
+      <metal op="add">20</metal>
+    </Resources>
+  </Cost>
+  <Loot>
+    <food op="add">4</food>
+    <metal op="add">2</metal>
+  </Loot>
+  <Identity>
+    <Civ>rome</Civ>
+    <Lang>latin</Lang>
+    <GenericName>Roman Centurion</GenericName>
+    <SpecificName>Centuriō</SpecificName>
+    <Icon>units/rome/champion_infantry_centurion.png</Icon>
+    <Tooltip>Centurions may be promoted from elite melee citizen infantry, and train from the Fortress after Marian Reforms.</Tooltip>
+    <VisibleClasses datatype="tokens">Centurion</VisibleClasses>
+    <Requirements>
+      <Techs datatype="tokens">roman_reforms -phase_city</Techs>
+    </Requirements>
+  </Identity>
+  <TrainingRestrictions>
+    <Category>Centurion</Category>
+  </TrainingRestrictions>
+  <VisualActor>
+    <Actor>units/romans/infantry_swordsman_f.xml</Actor>
+  </VisualActor>
+</Entity>

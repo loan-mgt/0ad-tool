@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entity parent="template_unit_ship_warship">
+  <Attack>
+    <Ranged>
+      <Damage>
+        <Hack>0</Hack>
+        <Pierce>32</Pierce>
+        <Crush>0</Crush>
+      </Damage>
+      <Bonuses>
+        <BonusShip>
+          <Classes>Ship</Classes>
+          <Multiplier>3.0</Multiplier>
+        </BonusShip>
+      </Bonuses>
+      <PrepareTime op="mul">0.25</PrepareTime>
+      <RepeatTime op="mul">0.5</RepeatTime>
+      <MaxRange op="mul">1.25</MaxRange>
+    </Ranged>
+  </Attack>
+  <Cost>
+    <Population>1</Population>
+    <BuildTime>24</BuildTime>
+    <Resources>
+      <wood>120</wood>
+      <metal>100</metal>
+    </Resources>
+  </Cost>
+  <GarrisonHolder>
+    <Max>30</Max>
+    <EjectClassesOnDestroy datatype="tokens">FemaleCitizen Infantry Dog</EjectClassesOnDestroy>
+    <List datatype="tokens">Siege</List>
+  </GarrisonHolder>
+  <Health>
+    <Max>1000</Max>
+  </Health>
+  <Identity>
+    <GenericName>Arrow Ship</GenericName>
+    <VisibleClasses datatype="tokens">ArrowShip Ranged</VisibleClasses>
+    <Classes datatype="tokens">Trireme</Classes>
+    <Tooltip>Counters: 3× vs Ships. Garrison units for transport across water. Strong against Fire Ships.</Tooltip>
+    <Requirements>
+      <Techs datatype="tokens">
+        phase_town
+      </Techs>
+    </Requirements>
+  </Identity>
+  <Loot>
+    <xp>50</xp>
+    <wood>12</wood>
+    <metal>10</metal>
+  </Loot>
+  <Position>
+    <TurnRate>1.3</TurnRate>
+  </Position>
+  <Resistance>
+    <Entity>
+      <Damage>
+        <Hack>3</Hack>
+        <Pierce>5</Pierce>
+        <Crush>1</Crush>
+      </Damage>
+    </Entity>
+  </Resistance>
+  <UnitMotion>
+    <WalkSpeed op="mul">1.5</WalkSpeed>
+    <Acceleration op="mul">4</Acceleration>
+  </UnitMotion>
+</Entity>

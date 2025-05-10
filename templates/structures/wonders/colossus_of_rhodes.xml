@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entity parent="template_structure_wonder">
+  <Footprint replace="">
+    <Circle radius="11.0"/>
+    <Height>30.0</Height>
+  </Footprint>
+  <Identity>
+    <GenericName>Colossus of Rhodes</GenericName>
+    <SpecificName>Ho Kolossòs Rhódios</SpecificName>
+  </Identity>
+  <Obstruction>
+    <Static width="17.0" depth="17.0"/>
+  </Obstruction>
+  <StatusBars>
+    <HeightOffset>38.0</HeightOffset>
+  </StatusBars>
+  <VisualActor>
+    <FoundationActor>structures/carthaginians/fndn_wall_tower.xml</FoundationActor>
+    <Actor>structures/wonders/colossus_of_rhodes_covered.xml</Actor>
+  </VisualActor>
+</Entity>

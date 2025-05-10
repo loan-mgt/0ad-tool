@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entity parent="template_unit_infantry_ranged_javelineer">
+  <Builder>
+    <Entities datatype="tokens">
+      structures/rome/army_camp
+      structures/rome/temple_vesta
+    </Entities>
+  </Builder>
+  <Cost>
+    <Resources>
+      <metal>15</metal>
+    </Resources>
+  </Cost>
+  <Loot> 
+    <metal>2</metal>
+  </Loot>
+  <Identity>
+    <Civ>rome</Civ>
+    <Lang>latin</Lang>
+    <SelectionGroupName>units/rome/infantry_antesignanus</SelectionGroupName>
+    <GenericName>Legionary Skirmisher</GenericName>
+    <SpecificName>Antesignānus</SpecificName>
+    <VisibleClasses datatype="tokens">Legionary</VisibleClasses>
+    <Rank>Elite</Rank>
+    <Icon>units/rome/infantry_antesignanus.png</Icon>
+    <Requirements>
+      <Techs datatype="tokens">roman_reforms</Techs>
+    </Requirements>
+  </Identity>
+  <Promotion disable=""/>
+  <VisualActor>
+    <Actor>units/romans/infantry_javelinist_reform.xml</Actor>
+  </VisualActor>
+</Entity>

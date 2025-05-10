@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entity parent="template_unit_ship">
+  <Attack>
+    <Melee>
+      <AttackName>Harpoon</AttackName>
+      <Damage>
+        <Hack>10</Hack>
+      </Damage>
+      <MaxRange>5</MaxRange>
+      <PrepareTime>500</PrepareTime>
+      <RepeatTime>1000</RepeatTime>
+      <RestrictedClasses datatype="tokens">!SeaCreature</RestrictedClasses>
+    </Melee>
+  </Attack>
+  <Cost>
+    <BuildTime>15</BuildTime>
+    <Resources>
+      <wood>50</wood>
+    </Resources>
+  </Cost>
+  <GarrisonHolder>
+    <Max>1</Max>
+  </GarrisonHolder>
+  <Health>
+    <Max>220</Max>
+  </Health>
+  <Identity>
+    <GenericName>Fishing Boat</GenericName>
+    <SelectionGroupName>template_unit_ship_fishing</SelectionGroupName>
+    <Tooltip>Fish the waters for food.</Tooltip>
+    <Classes datatype="tokens">-ConquestCritical</Classes>
+    <VisibleClasses datatype="tokens">FishingBoat</VisibleClasses>
+  </Identity>
+  <Loot>
+    <wood>10</wood>
+  </Loot>
+  <ResourceGatherer>
+    <MaxDistance>6.0</MaxDistance>
+    <BaseSpeed>1.0</BaseSpeed>
+    <Rates>
+      <food.fish>1.8</food.fish>
+    </Rates>
+    <Capacities>
+      <food>40</food>
+    </Capacities>
+  </ResourceGatherer>
+  <Resistance>
+    <Entity>
+      <Damage>
+        <Hack>5</Hack>
+        <Pierce>3</Pierce>
+        <Crush>3</Crush>
+      </Damage>
+    </Entity>
+  </Resistance>
+  <Selectable>
+    <Overlay>
+      <Texture>
+        <MainTexture>128x256/ellipse.png</MainTexture>
+        <MainTextureMask>128x256/ellipse_mask.png</MainTextureMask>
+      </Texture>
+    </Overlay>
+  </Selectable>
+  <StatusBars>
+    <BarWidth>2.0</BarWidth>
+    <BarHeight>0.333</BarHeight>
+    <HeightOffset>5.0</HeightOffset>
+  </StatusBars>
+  <TreasureCollector>
+    <MaxDistance>5</MaxDistance>
+  </TreasureCollector>
+  <UnitAI>
+    <DefaultStance>passive</DefaultStance>
+    <CanGuard>false</CanGuard>
+    <CanPatrol>false</CanPatrol>
+  </UnitAI>
+  <UnitMotion>
+    <PassabilityClass>ship-small</PassabilityClass>
+    <WalkSpeed op="mul">1.1</WalkSpeed>
+    <Acceleration op="mul">1.1</Acceleration>
+  </UnitMotion>
+  <Vision>
+    <Range>30</Range>
+  </Vision>
+</Entity>

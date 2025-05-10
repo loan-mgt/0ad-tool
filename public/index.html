@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0 A.D. Helper Tool</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/modern-normalize/modern-normalize.min.css">
+    <style>
+        body { font-family: sans-serif; margin: 2rem; background: #f8f9fa; }
+        header { margin-bottom: 2rem; }
+        .civ-select { margin-bottom: 2rem; }
+        .units-list { display: flex; flex-wrap: wrap; gap: 1rem; }
+        .unit-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; min-width: 180px; box-shadow: 0 2px 6px #0001; cursor: pointer; transition: box-shadow 0.2s; }
+        .unit-card:focus, .unit-card:hover { box-shadow: 0 4px 12px #0002; outline: none; }
+        .unit-details { margin-top: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 6px #0001; padding: 1.5rem; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>0 A.D. Helper Tool</h1>
+        <p>Choose your civilisation and explore all units. Click a unit to see its stats.</p>
+    </header>
+    <section class="civ-select">
+        <label for="civ">Civilisation:</label>
+        <select id="civ">
+            <option value="">-- Select --</option>
+            <!-- Civilisation options will be populated by JS -->
+        </select>
+    </section>
+    <section class="units-list" id="units-list">
+        <!-- Units will be listed here -->
+    </section>
+    <section class="unit-details" id="unit-details" style="display:none;">
+        <!-- Unit details will be shown here -->
+    </section>
+    <script src="main.js"></script>
+</body>
+</html>

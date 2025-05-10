@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entity>
+  <DeathDamage>
+    <Shape>Circular</Shape>
+    <Range>22</Range>
+    <FriendlyFire>false</FriendlyFire>
+	<Bonuses>
+	  <BonusShip>
+		<Classes>Ship Building</Classes>
+	    <Multiplier>3.0</Multiplier>
+	  </BonusShip>
+	</Bonuses>
+    <Damage>
+	  <Crush>500</Crush>
+    </Damage>
+  </DeathDamage>
+  <Health>
+    <RegenRate>-200</RegenRate>
+    <DamageVariants>
+      <mediumdamage>0.65</mediumdamage>
+      <heavydamage>0.35</heavydamage>
+    </DamageVariants>
+  </Health>
+  <Identity>
+    <VisibleClasses datatype="tokens">Ignited</VisibleClasses>
+  </Identity>
+  <Repairable disable=""/>
+  <Loot disable=""/>
+  <UnitMotion>
+    <WalkSpeed>17</WalkSpeed>
+    <Acceleration op="mul">2</Acceleration>
+  </UnitMotion>
+  <Upgrade disable=""/>
+</Entity>
+

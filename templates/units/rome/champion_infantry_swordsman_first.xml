@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entity parent="template_unit_champion_infantry_swordsman">
+  <Health>
+    <DamageVariants>
+      <lightdamage>0.85</lightdamage>
+      <mediumdamage>0.45</mediumdamage>
+    </DamageVariants>
+  </Health>
+  <Identity>
+    <Civ>rome</Civ>
+    <Lang>latin</Lang>
+    <GenericName>First Cohort Legionary</GenericName>
+    <SpecificName>Cohors Prima Legiōnārius</SpecificName>
+    <SelectionGroupName>units/rome/champion_infantry_swordsman</SelectionGroupName>
+    <Icon>units/rome/champion_infantry_first.png</Icon>
+    <Requirements>
+      <Techs datatype="tokens">-phase_city unlock_champion_infantry</Techs>
+    </Requirements>
+  </Identity>
+  <VisualActor>
+    <Actor>units/romans/infantry_swordsman_c6.xml</Actor>
+  </VisualActor>
+</Entity>

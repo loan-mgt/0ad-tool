@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entity parent="template_unit_cavalry_melee_spearman">
+  <Identity>
+    <Civ>rome</Civ>
+    <Lang>latin</Lang>
+    <GenericName>Auxiliary Cavalry Spearman</GenericName>
+    <SpecificName>Eques Alaris</SpecificName>
+    <VisibleClasses datatype="tokens">Auxiliary</VisibleClasses>
+    <SelectionGroupName>units/rome/cavalry_spearman_auxiliary_b</SelectionGroupName>
+    <Icon>units/rome/cavalry_spearman_auxiliary.png</Icon>
+    <Requirements>
+      <Techs datatype="tokens">roman_reforms</Techs>
+    </Requirements>
+  </Identity>
+  <Promotion>
+    <Entity>units/rome/cavalry_spearman_auxiliary_a</Entity>
+  </Promotion>
+  <VisualActor>
+    <Actor>units/romans/cavalry_spearman_auxiliary_b_m.xml</Actor>
+  </VisualActor>
+</Entity>
