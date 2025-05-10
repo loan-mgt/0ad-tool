@@ -1,10 +1,11 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"0ad/tool/loader"
+
+	"github.com/gin-gonic/gin" // Added for gin.Context
 )
 
 var civs []loader.Civ
@@ -13,8 +14,9 @@ func InitCivilisations(civList []loader.Civ) {
 	civs = civList
 }
 
-func GetCivilisationsHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(civs)
+// GetCivilisationsHandler now uses gin.Context
+func GetCivilisationsHandler(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	// Content-Type is automatically set to application/json by c.JSON
+	c.JSON(http.StatusOK, civs)
 }
