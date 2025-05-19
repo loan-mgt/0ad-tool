@@ -5,8 +5,14 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/beevik/etree"
+)
+
+var (
+	unitCache  = make(map[string]map[string]any)
+	cacheMutex = &sync.Mutex{}
 )
 
 // GetUnit loads a unit from the given filePath, parsing the XML and resolving parents using etree.
@@ -19,6 +25,16 @@ func GetUnit(filePath string) map[string]any {
 
 // loadUnitRecursiveEtree loads a unit recursively, merging data from XML files using etree.
 func loadUnitRecursiveEtree(unit map[string]any, filePath string) {
+
+	cacheMutex.Lock()
+	if cachedUnit, exists := unitCache[filePath]; exists {
+		println("Using cached unit for:", filePath)
+		deepCopy(unit, cachedUnit)
+
+		cacheMutex.Unlock()
+		return
+	}
+	cacheMutex.Unlock()
 
 	doc := etree.NewDocument()
 	err := doc.ReadFromFile(filePath)
@@ -43,6 +59,36 @@ func loadUnitRecursiveEtree(unit map[string]any, filePath string) {
 		}
 	}
 
+	cacheMutex.Lock()
+	if _, exists := unitCache[filePath]; !exists {
+		unitCache[filePath] = unit
+	}
+	cacheMutex.Unlock()
+	println("Unit loaded and cached:", filePath)
+	println("Current unit state:", utils.SPrintMapAny(unit))
+
+}
+
+func deepCopy(dst map[string]any, src map[string]any) {
+	for key, value := range src {
+		switch v := value.(type) {
+		case map[string]any:
+			var childDst map[string]any
+			if existing, exists := dst[key]; exists {
+				if m, ok := existing.(map[string]any); ok {
+					childDst = m
+				} else {
+					childDst = make(map[string]any)
+				}
+			} else {
+				childDst = make(map[string]any)
+			}
+			deepCopy(childDst, v)
+			dst[key] = childDst
+		default:
+			dst[key] = v
+		}
+	}
 }
 
 // mergeElementToMap merges an etree.Element into a map[string]any recursively.
@@ -65,7 +111,6 @@ func mergeElementToMap(dst map[string]any, elem *etree.Element) {
 			mergeElementToMap(childMap, child)
 			dst[child.Tag] = childMap
 		} else {
-			println("Child tag:", child.Tag, "Text:", child.Text(), "current:", utils.SPrintMapAny(dst))
 			if _, exists := dst[child.Tag]; !exists || (exists && (dst[child.Tag] == nil || (func(v any) bool { _, ok := v.(map[string]any); return !ok }(dst[child.Tag])))) {
 				dst[child.Tag] = child.Text()
 			}
