@@ -66,7 +66,34 @@ document.addEventListener('DOMContentLoaded', () => {
                                         const card = document.createElement('div');
                                         card.className = 'unit-card';
                                         card.tabIndex = 0;
-                                        card.textContent = unit.name;
+
+                                        // Add unit icon
+                                        if (unit.Identity && unit.Identity.Icon) {
+                                            const icon = document.createElement('img');
+                                            icon.src = unit.Identity.Icon;
+                                            icon.alt = unit.Identity.SpecificName || 'Unit icon';
+                                            icon.style.width = '100%'; // Adjust as needed
+                                            icon.style.height = 'auto'; // Adjust as needed
+                                            icon.style.marginBottom = '0.5rem';
+                                            card.appendChild(icon);
+                                        }
+
+                                        // Add SpecificName
+                                        if (unit.Identity && unit.Identity.SpecificName) {
+                                            const specificNameElement = document.createElement('div');
+                                            specificNameElement.textContent = unit.Identity.SpecificName;
+                                            specificNameElement.style.fontWeight = 'bold';
+                                            card.appendChild(specificNameElement);
+                                        }
+
+                                        // Add GenericName
+                                        if (unit.Identity && unit.Identity.GenericName) {
+                                            const genericNameElement = document.createElement('div');
+                                            genericNameElement.textContent = unit.Identity.GenericName;
+                                            genericNameElement.style.fontSize = '0.8em';
+                                            genericNameElement.style.color = '#666';
+                                            card.appendChild(genericNameElement);
+                                        }
                                         // TODO: Add click handler to show unit details
                                         groupDiv.appendChild(card);
                                     });

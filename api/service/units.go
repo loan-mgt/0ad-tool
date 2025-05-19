@@ -47,19 +47,26 @@ func loadUnitRecursiveEtree(unit map[string]any, filePath string) {
 
 // mergeElementToMap merges an etree.Element into a map[string]any recursively.
 func mergeElementToMap(dst map[string]any, elem *etree.Element) {
+	if dst == nil {
+		dst = map[string]any{}
+	}
 	for _, child := range elem.ChildElements() {
 		if len(child.ChildElements()) > 0 {
 			var childMap map[string]any
-			if _, exists := dst[child.Tag]; !exists {
+			existing, exists := dst[child.Tag]
+			if !exists {
 				childMap = map[string]any{}
 			} else {
-				childMap = dst[child.Tag].(map[string]any)
+				// Check if existing value is a map[string]any
+				if m, ok := existing.(map[string]any); ok {
+					childMap = m
+				}
 			}
 			mergeElementToMap(childMap, child)
 			dst[child.Tag] = childMap
 		} else {
 			println("Child tag:", child.Tag, "Text:", child.Text(), "current:", utils.SPrintMapAny(dst))
-			if _, exists := dst[child.Tag]; !exists {
+			if _, exists := dst[child.Tag]; !exists || (exists && (dst[child.Tag] == nil || (func(v any) bool { _, ok := v.(map[string]any); return !ok }(dst[child.Tag])))) {
 				dst[child.Tag] = child.Text()
 			}
 		}
