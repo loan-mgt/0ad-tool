@@ -17,7 +17,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     fetch(`${api}/civilisations/${civCode}/units`)
                         .then(res => res.json())
                         .then(units => {
-                            // Group units by type
+                            // START: Filter units to display one per SpecificName and mark if others exist
+                            const specificNameCounts = units.reduce((acc, unit) => {
+                                const name = unit.Identity?.SpecificName;
+                                if (name) {
+                                    acc[name] = (acc[name] || 0) + 1;
+                                }
+                                return acc;
+                            }, {});
+
+                            const uniqueDisplayUnits = [];
+                            const seenSpecificNames = new Set();
+
+                            units.forEach(originalUnit => {
+                                const unit = { ...originalUnit }; // Create a copy to safely add properties
+                                const specificName = unit.Identity?.SpecificName;
+
+                                if (specificName) {
+                                    // This unit has a SpecificName
+                                    if (!seenSpecificNames.has(specificName)) {
+                                        // This is the first time we're seeing this SpecificName
+                                        if (specificNameCounts[specificName] > 1) {
+                                            unit.hasMultipleVariants = true; // Mark if other variants exist
+                                        }
+                                        uniqueDisplayUnits.push(unit);
+                                        seenSpecificNames.add(specificName);
+                                    }
+                                    // If seenSpecificNames.has(specificName) is true, we skip this unit.
+                                } else {
+                                    // Unit does not have a SpecificName, display it as is.
+                                    uniqueDisplayUnits.push(unit);
+                                }
+                            });
+                            // END: Filter units
+
+                            // Group units by type using uniqueDisplayUnits
                             const groups = {
                                 infantry: [],
                                 cavalry: [],
@@ -28,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 support: [],
                                 other: []
                             };
-                            units.forEach(unit => {
+                            uniqueDisplayUnits.forEach(unit => { // MODIFIED: Use uniqueDisplayUnits here
                                 const code = unit.code.toLowerCase();
                                 if (code.includes('infantry')) groups.infantry.push(unit);
                                 else if (code.includes('cavalry')) groups.cavalry.push(unit);
@@ -83,6 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                             const specificNameElement = document.createElement('div');
                                             specificNameElement.textContent = unit.Identity.SpecificName;
                                             specificNameElement.style.fontWeight = 'bold';
+
+                                            if (unit.hasMultipleVariants) {
+                                                const multiIcon = document.createElement('span');
+                                                multiIcon.textContent = ' ➕'; // Using a plus icon, with a leading space
+                                                multiIcon.title = 'Multiple variants or upgrades exist for this unit type';
+                                                multiIcon.style.fontSize = '0.9em'; // Make icon slightly smaller
+                                                multiIcon.style.fontWeight = 'normal'; // Keep icon normal weight
+                                                specificNameElement.appendChild(multiIcon);
+                                            }
                                             card.appendChild(specificNameElement);
                                         }
 
