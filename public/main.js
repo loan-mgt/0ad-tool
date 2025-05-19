@@ -13,7 +13,21 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             select.addEventListener('change', (e) => {
                 const civCode = e.target.value;
+                const unitsList = document.getElementById('units-list');
+                const spinner = document.getElementById('loading-spinner');
+
                 if (civCode) {
+                    if (spinner) {
+                        spinner.style.display = 'block'; // Show spinner
+                    } else {
+                        console.error("Spinner element #loading-spinner not found when trying to show it.");
+                    }
+                    unitsList.innerHTML = ''; // Clear previous units
+                    // Ensure the spinner is the only child if unitsList was cleared and spinner exists
+                    if (spinner && !unitsList.contains(spinner)) {
+                        unitsList.appendChild(spinner); 
+                    }
+
                     fetch(`${api}/civilisations/${civCode}/units`)
                         .then(res => res.json())
                         .then(units => {
@@ -74,8 +88,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 else groups.other.push(unit);
                             });
 
-                            const unitsList = document.getElementById('units-list');
-                            unitsList.innerHTML = '';
+                            // Hide the spinner now that data is processed and before adding new elements
+                            if (spinner) {
+                                spinner.style.display = 'none'; 
+                            }
+
                             const groupOrder = [
                                 { key: 'infantry', label: 'Infantry' },
                                 { key: 'cavalry', label: 'Cavalry' },
@@ -146,9 +163,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         })
                         .catch(err => {
                             console.error('Failed to load units:', err);
+                            if (spinner) {
+                                spinner.style.display = 'none'; // Hide spinner on error
+                            }
                         });
                 } else {
-                    // TODO: Clear units-list section
+                    unitsList.innerHTML = ''; // Clear units-list section
+                    if (spinner) {
+                        spinner.style.display = 'none'; // Hide spinner if no civ is selected
+                    }
                 }
             });
         })
