@@ -8,11 +8,11 @@
     <style>
         body { font-family: sans-serif; margin: 2rem; background: #f8f9fa; }
         header { margin-bottom: 2rem; }
-        .civ-select { margin-bottom: 2rem; }
+        .civ-select { margin-bottom: 1rem; } /* Adjusted margin */
         .units-list { display: flex; flex-wrap: wrap; gap: 1rem; flex-direction: column; position: relative; /* Added for spinner positioning */ }
         .unit-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; min-width: 180px; box-shadow: 0 2px 6px #0001; cursor: pointer; transition: box-shadow 0.2s; }
         .unit-card:focus, .unit-card:hover { box-shadow: 0 4px 12px #0002; outline: none; }
-        .unit-details { margin-top: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 6px #0001; padding: 1.5rem; border: 1px solid #ddd; }
+        .unit-details { margin-top: 0; height: fit-content; background: #fff; border-radius: 8px; box-shadow: 0 2px 6px #0001; padding: 1.5rem; border: 1px solid #ddd; flex: 1; /* Takes up 50% when visible */ }
 
         /* Loading Spinner Styles */
         .loading-spinner {
@@ -34,6 +34,61 @@
             0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
+
+        /* New styles for two-column layout and details */
+        .main-content {
+            display: flex;
+            gap: 1.5rem; /* Gap between units list and details */
+            margin-top: 1rem;
+        }
+
+        .units-list {
+            /* ...existing code... */
+            /* display: flex; flex-wrap: wrap; gap: 1rem; flex-direction: column; */
+            /* flex-direction: column; is already there */
+            flex: 1; /* Takes up 50% if details are visible and also flex:1 */
+        }
+
+        /* Styles for the definition list in unit-details */
+        .unit-details dl {
+            display: grid;
+            grid-template-columns: auto 1fr; /* Label and value */
+            gap: 0.5rem 1rem; /* Row and column gap */
+        }
+        .unit-details dt {
+            font-weight: bold;
+            grid-column: 1;
+        }
+        .unit-details dd {
+            grid-column: 2;
+            margin-left: 0; /* Reset default dd margin */
+            word-break: break-word; /* Prevent long strings from breaking layout */
+            white-space: pre-wrap; /* Preserve formatting in strings like multi-line text */
+        }
+
+        /* Styles for nested dl elements (objects) */
+        .unit-details dd dl.stat-object-nested {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.25rem 0.5rem; /* Smaller gap for nested items */
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+            padding-left: 10px; /* Indentation for nesting */
+            border-left: 1px solid #eee; /* Visual cue for nesting depth */
+        }
+
+        /* Styles for ul elements (arrays) */
+        .unit-details dd ul.stat-array {
+            list-style-type: disc;
+            margin-left: 0; /* Reset default browser margin */
+            padding-left: 20px; /* Indentation for list items */
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .unit-details dd ul.stat-array li {
+            margin-bottom: 0.25rem;
+        }
     </style>
 </head>
 <body>
@@ -49,12 +104,15 @@
         </select>
     </section>
     <div class="loading-spinner" id="loading-spinner"></div>
-    <section class="units-list" id="units-list">
-        <!-- Units will be listed here -->
-    </section>
-    <section class="unit-details" id="unit-details" style="display:none;">
-        <!-- Unit details will be shown here -->
-    </section>
+
+    <div class="main-content"> <!-- WRAPPER for units list and details -->
+        <section class="units-list" id="units-list">
+            <!-- Units will be listed here -->
+        </section>
+        <section class="unit-details" id="unit-details" style="display:none;">
+            <!-- Unit details will be shown here -->
+        </section>
+    </div>
     <script src="main.js"></script>
 </body>
 </html>
