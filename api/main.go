@@ -26,6 +26,7 @@ func main() {
 
 	// Updated route to use the middleware from the new package and correct handler reference
 	r.GET("/civilisations/:civ_folder/units", middleware.VerifyCivFolderMiddleware, handler.GetUnitsHandler)
+	r.GET("/civilisations/:civ_folder/units/:unit_code", middleware.VerifyCivFolderMiddleware, handler.GetUnitHandler)
 
 	log.Println("API server running on :8081")
 	r.Run(":8081")

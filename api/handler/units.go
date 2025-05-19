@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"0ad/tool/service"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -8,11 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-type Unit struct {
-	Code string `json:"code"`
-	Name string `json:"name"`
-}
 
 func GetUnitsHandler(c *gin.Context) {
 	unitsPath := "../templates/units"
@@ -27,14 +23,12 @@ func GetUnitsHandler(c *gin.Context) {
 		return
 	}
 
-	var units []Unit
+	var units []map[string]interface{}
 	for _, file := range files {
 		if file.IsDir() || !strings.HasSuffix(file.Name(), ".xml") {
 			continue
 		}
-		code := strings.TrimSuffix(file.Name(), ".xml")
-		name := formatUnitName(code) // Assuming formatUnitName is defined elsewhere in this package
-		units = append(units, Unit{Code: code, Name: name})
+		units = append(units, service.GetUnit(filepath.Join(civDir, file.Name())))
 	}
 
 	c.Header("Access-Control-Allow-Origin", "*")
@@ -43,11 +37,19 @@ func GetUnitsHandler(c *gin.Context) {
 
 }
 
-// formatUnitName formats the unit code to a display name as specified
-// This is a placeholder, assuming it's implemented correctly.
-func formatUnitName(code string) string {
-	// Example implementation: replace underscores with spaces and capitalize words
-	name := strings.ReplaceAll(code, "_", " ")
-	name = strings.ReplaceAll(name, "-", " ")
-	return strings.Title(name) //nolint:staticcheck // SA1019: strings.Title is deprecated
+func GetUnitHandler(c *gin.Context) {
+	civFolder := c.Param("civ_folder")
+	unitCode := c.Param("unit_code")
+	unitsPath := "../templates/units"
+	civDir := filepath.Join(unitsPath, civFolder)
+	unitFilePath := filepath.Join(civDir, unitCode+".xml")
+
+	if _, err := os.Stat(unitFilePath); os.IsNotExist(err) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Unit not found"})
+		return
+	}
+
+	unit := service.GetUnit(unitFilePath)
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.JSON(http.StatusOK, unit)
 }

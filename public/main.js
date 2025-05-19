@@ -17,8 +17,62 @@ document.addEventListener('DOMContentLoaded', () => {
                     fetch(`${api}/civilisations/${civCode}/units`)
                         .then(res => res.json())
                         .then(units => {
-                            // TODO: Render units in the units-list section
-                            console.log('Units:', units);
+                            // Group units by type
+                            const groups = {
+                                infantry: [],
+                                cavalry: [],
+                                champion: [],
+                                hero: [],
+                                ship: [],
+                                siege: [],
+                                support: [],
+                                other: []
+                            };
+                            units.forEach(unit => {
+                                const code = unit.code.toLowerCase();
+                                if (code.includes('infantry')) groups.infantry.push(unit);
+                                else if (code.includes('cavalry')) groups.cavalry.push(unit);
+                                else if (code.includes('champion')) groups.champion.push(unit);
+                                else if (code.includes('hero')) groups.hero.push(unit);
+                                else if (code.startsWith('ship')) groups.ship.push(unit);
+                                else if (code.startsWith('siege')) groups.siege.push(unit);
+                                else if (code.startsWith('support')) groups.support.push(unit);
+                                else groups.other.push(unit);
+                            });
+
+                            const unitsList = document.getElementById('units-list');
+                            unitsList.innerHTML = '';
+                            const groupOrder = [
+                                { key: 'infantry', label: 'Infantry' },
+                                { key: 'cavalry', label: 'Cavalry' },
+                                { key: 'champion', label: 'Champions' },
+                                { key: 'hero', label: 'Heroes' },
+                                { key: 'ship', label: 'Ships' },
+                                { key: 'siege', label: 'Siege' },
+                                { key: 'support', label: 'Support' },
+                                { key: 'other', label: 'Other' }
+                            ];
+                            groupOrder.forEach(group => {
+                                if (groups[group.key].length) {
+                                    const groupTitle = document.createElement('h3');
+                                    groupTitle.textContent = group.label;
+                                    unitsList.appendChild(groupTitle);
+                                    const groupDiv = document.createElement('div');
+                                    groupDiv.className = 'units-group';
+                                    groupDiv.style.display = 'flex';
+                                    groupDiv.style.flexWrap = 'wrap';
+                                    groupDiv.style.gap = '1rem';
+                                    groups[group.key].forEach(unit => {
+                                        const card = document.createElement('div');
+                                        card.className = 'unit-card';
+                                        card.tabIndex = 0;
+                                        card.textContent = unit.name;
+                                        // TODO: Add click handler to show unit details
+                                        groupDiv.appendChild(card);
+                                    });
+                                    unitsList.appendChild(groupDiv);
+                                }
+                            });
                         })
                         .catch(err => {
                             console.error('Failed to load units:', err);
