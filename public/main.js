@@ -87,9 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                         }
 
                                         // Add GenericName
-                                        if (unit.Identity && unit.Identity.GenericName) {
+                                        if (unit.Identity && (unit.Identity.GenericName || unit.Identity.VisibleClasses)) {
                                             const genericNameElement = document.createElement('div');
-                                            genericNameElement.textContent = unit.Identity.GenericName;
+                                            genericNameElement.textContent = unit.Identity.VisibleClasses ?? unit.Identity.GenericName;
                                             genericNameElement.style.fontSize = '0.8em';
                                             genericNameElement.style.color = '#666';
                                             card.appendChild(genericNameElement);
