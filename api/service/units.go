@@ -31,6 +31,8 @@ func loadUnitRecursiveEtree(unit map[string]any, filePath string) {
 		return
 	}
 	println("Merging unit from:", filePath, "\n\n\n\n", "==========================")
+	println("Before Root", utils.SPrintMapAny(unit))
+	println("<==========================")
 	mergeElementToMap(unit, root)
 
 	println("Merged unit:", utils.SPrintMapAny(unit))
@@ -53,31 +55,28 @@ func mergeElementToMap(dst map[string]any, elem *etree.Element) {
 	if dst == nil {
 		dst = map[string]any{}
 	}
-	println(">==========================")
-	println("Before merge:", utils.SPrintMapAny(dst))
+
 	for _, child := range elem.ChildElements() {
 		if len(child.ChildElements()) > 0 {
-			var childMap map[string]any
-			existing, exists := dst[child.Tag]
+			_, exists := dst[child.Tag]
 			if !exists {
-				childMap = map[string]any{}
-			} else {
-				// Check if existing value is a map[string]any
-				if m, ok := existing.(map[string]any); ok {
-					childMap = m
-				}
+				dst[child.Tag] = map[string]any{}
 			}
-			mergeElementToMap(childMap, child)
-			dst[child.Tag] = childMap
+			if _, ok := dst[child.Tag].(map[string]any); ok {
+				println("Before ", child.Tag, utils.SPrintMapAny(dst[child.Tag]))
+				println("<==========================")
+				mergeElementToMap(dst[child.Tag].(map[string]any), child)
+				println("After ", utils.SPrintMapAny(dst[child.Tag]))
+				println(">==========================")
+			}
+
 		} else {
 			//println("Child tag:", child.Tag, "Text:", child.Text(), "current:", utils.SPrintMapAny(dst))
-			if _, exists := dst[child.Tag]; !exists || (exists && (dst[child.Tag] == nil || (func(v any) bool { _, ok := v.(map[string]any); return !ok }(dst[child.Tag])))) {
+			if _, exists := dst[child.Tag]; !exists {
 				dst[child.Tag] = child.Text()
 			}
 		}
 	}
-	println("After ", utils.SPrintMapAny(dst))
-	println(">==========================")
 
 }
 

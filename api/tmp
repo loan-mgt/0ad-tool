@@ -1,0 +1,16 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /civilisations            --> 0ad/tool/handler.GetCivilisationsHandler (4 handlers)
+[GIN-debug] GET    /civilisations/:civ_folder/units --> 0ad/tool/handler.GetUnitsHandler (5 handlers)
+[GIN-debug] GET    /civilisations/:civ_folder/units/:unit_code --> 0ad/tool/handler.GetUnitHandler (5 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8081
+[GIN] 2025/05/20 - 14:56:03 | 200 |       74.95µs |       127.0.0.1 | GET      "/civilisations"
+[GIN] 2025/05/20 - 14:56:04 | 200 |  296.509555ms |       127.0.0.1 | GET      "/civilisations/athen/units"
+[GIN] 2025/05/20 - 14:58:37 | 200 |  454.759985ms |       127.0.0.1 | GET      "/civilisations/pers/units"
+[GIN] 2025/05/20 - 15:02:10 | 200 |  297.654602ms |       127.0.0.1 | GET      "/civilisations/cart/units"
