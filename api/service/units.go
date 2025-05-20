@@ -11,6 +11,7 @@ import (
 
 // GetUnit loads a unit from the given filePath, parsing the XML and resolving parents using etree.
 func GetUnit(filePath string) map[string]any {
+	println("================================ start load unit ================================")
 	unit := map[string]any{"code": strings.TrimSuffix(filepath.Base(filePath), ".xml")}
 	loadUnitRecursiveEtree(unit, filePath)
 	println("Loading unit from:", filePath)
@@ -29,8 +30,10 @@ func loadUnitRecursiveEtree(unit map[string]any, filePath string) {
 	if root == nil {
 		return
 	}
-	println("Loaded XML root:", root.Tag)
+	println("Merging unit from:", filePath, "\n\n\n\n", "==========================")
 	mergeElementToMap(unit, root)
+
+	println("Merged unit:", utils.SPrintMapAny(unit))
 
 	parentAttri := getRootAttr(root)
 
@@ -50,6 +53,8 @@ func mergeElementToMap(dst map[string]any, elem *etree.Element) {
 	if dst == nil {
 		dst = map[string]any{}
 	}
+	println(">==========================")
+	println("Before merge:", utils.SPrintMapAny(dst))
 	for _, child := range elem.ChildElements() {
 		if len(child.ChildElements()) > 0 {
 			var childMap map[string]any
@@ -65,12 +70,15 @@ func mergeElementToMap(dst map[string]any, elem *etree.Element) {
 			mergeElementToMap(childMap, child)
 			dst[child.Tag] = childMap
 		} else {
-			println("Child tag:", child.Tag, "Text:", child.Text(), "current:", utils.SPrintMapAny(dst))
+			//println("Child tag:", child.Tag, "Text:", child.Text(), "current:", utils.SPrintMapAny(dst))
 			if _, exists := dst[child.Tag]; !exists || (exists && (dst[child.Tag] == nil || (func(v any) bool { _, ok := v.(map[string]any); return !ok }(dst[child.Tag])))) {
 				dst[child.Tag] = child.Text()
 			}
 		}
 	}
+	println("After ", utils.SPrintMapAny(dst))
+	println(">==========================")
+
 }
 
 func getRootAttr(elem *etree.Element) map[string]string {
@@ -95,11 +103,6 @@ func resolveParentPath(currentPath, parent string) string {
 			filepath.Join("../templates/units", p),
 			filepath.Join("../templates", p),
 			filepath.Join(filepath.Dir(currentPath), p),
-		}
-
-		println("Trying paths:")
-		for _, try := range tryPaths {
-			println(try)
 		}
 
 		for _, try := range tryPaths {

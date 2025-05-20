@@ -12,16 +12,19 @@ func SPrintMapAny(m any) string {
 }
 
 func SPrintMap(m map[string]any) string {
-	var result string = "\n[ "
+	return SPrintMapRaw(m, "")
+}
+
+func SPrintMapRaw(m map[string]any, indent string) string {
+	var result string = "\n" + indent
 	for key, value := range m {
 		switch v := value.(type) {
 		case map[string]any:
-			result += key + ":\n" + SPrintMap(v)
+			result += "\n" + indent + key + ":" + SPrintMapRaw(v, indent+"  ") + "\n"
 		default:
 			result += key + ": " + v.(string) + ", "
 		}
 	}
-	result += "]"
 	return result
 }
 
