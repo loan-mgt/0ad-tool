@@ -22,6 +22,11 @@ func main() {
 	// Add CORS middleware. Default() allows all origins
 	r.Use(cors.Default())
 
+	// Add hello route
+	r.GET("/", func(c *gin.Context) {
+		c.String(200, "hello from 0ad tool api")
+	})
+
 	r.GET("/civilisations", handler.GetCivilisationsHandler)
 
 	// Updated route to use the middleware from the new package and correct handler reference
