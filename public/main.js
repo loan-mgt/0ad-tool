@@ -1,4 +1,4 @@
-const api = "http://localhost:8081";
+const api = "";
 
 document.addEventListener("DOMContentLoaded", () => {
   fetch(`${api}/civilisations`)
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     card.tabIndex = 0;
                     if (unit.Identity && unit.Identity.Icon) {
                       const icon = document.createElement("img");
-                      icon.src = unit.Identity.Icon;
+                      icon.src = `static/${unit.Identity.Icon}`;
                       icon.alt = unit.Identity.SpecificName || "Unit icon";
                       icon.style.width = "100%";
                       icon.style.height = "auto";
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Add unit icon
                     if (unit.Identity && unit.Identity.Icon) {
                       const icon = document.createElement("img");
-                      icon.src = unit.Identity.Icon;
+                      icon.src = `static/${unit.Identity.Icon}`;
                       icon.alt = unit.Identity.SpecificName || "Unit icon";
                       icon.style.width = "100%"; // Adjust as needed
                       icon.style.height = "auto"; // Adjust as needed
@@ -446,7 +446,7 @@ function displayUnitDetails(clickedUnit, allCivUnits) {
 
     if (unitToShow.Identity.Icon) {
       const iconImg = document.createElement("img");
-      iconImg.src = unitToShow.Identity.Icon;
+      iconImg.src = `static/${unitToShow.Identity.Icon}`;
       iconImg.alt = (unitToShow.Identity.SpecificName || "Unit") + " icon"; // Added fallback for alt text
       iconImg.style.maxWidth = "100px";
       iconImg.style.maxHeight = "100px";

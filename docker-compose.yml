@@ -1,10 +1,8 @@
 version: '3.8'
 services:
-  web:
-    build: .
-    ports:
-      - "8080:80"
-    volumes:
-      - ./public:/usr/share/nginx/html:ro
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  main:
+    image: ghcr.io/loan-mgt/0ad-tool:latest
+    container_name: 0ad-tool
     restart: unless-stopped
+    ports:
+      - "9380:8081"

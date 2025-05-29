@@ -22,16 +22,19 @@ func main() {
 	// Add CORS middleware. Default() allows all origins
 	r.Use(cors.Default())
 
-	// Add hello route
-	r.GET("/", func(c *gin.Context) {
-		c.String(200, "hello from 0ad tool api")
-	})
-
 	r.GET("/civilisations", handler.GetCivilisationsHandler)
 
 	// Updated route to use the middleware from the new package and correct handler reference
 	r.GET("/civilisations/:civ_folder/units", middleware.VerifyCivFolderMiddleware, handler.GetUnitsHandler)
 	r.GET("/civilisations/:civ_folder/units/:unit_code", middleware.VerifyCivFolderMiddleware, handler.GetUnitHandler)
+
+	// Serve static files from the public directory at /static
+	r.Static("/static", "./public")
+
+	// Serve index.html at the root route
+	r.GET("/", func(c *gin.Context) {
+		c.File("./public/index.html")
+	})
 
 	log.Println("API server running on :8081")
 	r.Run(":8081")
