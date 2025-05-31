@@ -4,11 +4,12 @@
 clean up data xml
 find . -type f -name '*.cached.xmb' -delete
 
+# Icon
 
-clean up icon 
-find . -name "*cached.dds*" -type f -exec bash -c 'mv "$1" "${1//.cached.dds/}"' _ {} \;
+path to icon:
+from: [gitea](https://gitea.wildfiregames.com/0ad/0ad/src/branch/main/binaries/data/mods/public/art/textures/ui/session/portraits/units)
+`binaries/data/mods/public/art/textures/ui/session/portraits/units`
 
-find . -name "*.cached.dds" -exec bash -c 'ffmpeg -i "$1" "${1%.cached.dds}.png"' _ {} \;
 
 # Dev
 
