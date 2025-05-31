@@ -15,4 +15,4 @@ from: [gitea](https://gitea.wildfiregames.com/0ad/0ad/src/branch/main/binaries/d
 
 `podman build -t 0ad .`
 
-`podman run -it --rm 0ad`
+`podman run -it -p 8080:8081 --rm 0ad`
