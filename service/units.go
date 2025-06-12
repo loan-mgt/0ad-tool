@@ -1,7 +1,6 @@
 package service
 
 import (
-	"0ad/tool/utils"
 	"os"
 	"path/filepath"
 	"strings"
@@ -30,20 +29,14 @@ func loadUnitRecursiveEtree(unit map[string]any, filePath string) {
 	if root == nil {
 		return
 	}
-	println("Merging unit from:", filePath, "\n\n\n\n", "==========================")
-	println("Before Root", utils.SPrintMapAny(unit))
-	println("<==========================")
-	mergeElementToMap(unit, root)
 
-	println("Merged unit:", utils.SPrintMapAny(unit))
+	mergeElementToMap(unit, root)
 
 	parentAttri := getRootAttr(root)
 
 	if parentValue, ok := parentAttri["parent"]; ok {
 		parentPath := resolveParentPath(filePath, parentValue)
-		println("Parent path:", parentPath)
 		if parentPath != "" {
-			println(filePath, "Loading parent unit from:", parentPath)
 			loadUnitRecursiveEtree(unit, parentPath)
 		}
 	}
@@ -63,11 +56,7 @@ func mergeElementToMap(dst map[string]any, elem *etree.Element) {
 				dst[child.Tag] = map[string]any{}
 			}
 			if _, ok := dst[child.Tag].(map[string]any); ok {
-				println("Before ", child.Tag, utils.SPrintMapAny(dst[child.Tag]))
-				println("<==========================")
 				mergeElementToMap(dst[child.Tag].(map[string]any), child)
-				println("After ", utils.SPrintMapAny(dst[child.Tag]))
-				println(">==========================")
 			}
 
 		} else {

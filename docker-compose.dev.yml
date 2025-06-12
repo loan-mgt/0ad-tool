@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  main:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 0ad-tool
+    restart: unless-stopped
+    ports:
+      - "9380:8081"
+    volumes:
+      - ./public:/app/public:ro

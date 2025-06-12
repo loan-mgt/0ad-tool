@@ -4,9 +4,12 @@ import (
 	"0ad/tool/handler"
 	"0ad/tool/loader"
 	"0ad/tool/middleware"
+	"html/template"
 	"log"
+	"net/http"
+	"strings"
 
-	"github.com/gin-contrib/cors" // Added import for CORS middleware
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,16 +27,30 @@ func main() {
 
 	r.GET("/civilisations", handler.GetCivilisationsHandler)
 
-	// Updated route to use the middleware from the new package and correct handler reference
 	r.GET("/civilisations/:civ_folder/units", middleware.VerifyCivFolderMiddleware, handler.GetUnitsHandler)
 	r.GET("/civilisations/:civ_folder/units/:unit_code", middleware.VerifyCivFolderMiddleware, handler.GetUnitHandler)
 
 	// Serve static files from the public directory at /static
 	r.Static("/static", "./public")
 
-	// Serve index.html at the root route
+	// Serve index.html at the root route using Go's template engine
 	r.GET("/", func(c *gin.Context) {
-		c.File("./public/index.html")
+		tmpl, err := template.New("index.html").Funcs(template.FuncMap{"lower": strings.ToLower}).ParseFiles("./public/index.html")
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Template parsing error: %v", err)
+			return
+		}
+
+		// Wrap Civs in a struct for extensibility
+		data := struct {
+			Civs []loader.Civ
+		}{
+			Civs: handler.Civs,
+		}
+
+		if err := tmpl.Execute(c.Writer, data); err != nil {
+			c.String(http.StatusInternalServerError, "Template execution error: %v", err)
+		}
 	})
 
 	log.Println("API server running on :8081")
