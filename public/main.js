@@ -431,8 +431,8 @@ function handleCivChange() {
                 const icon = document.createElement("img");
                 icon.src = `static/${unit.Identity.Icon}`;
                 icon.alt = unit.Identity.SpecificName || "Unit icon";
-                icon.style.width = "100%"; // Adjust as needed
-                icon.style.height = "auto"; // Adjust as needed
+                icon.style.width = "128px"; // Adjust as needed
+                icon.style.height = "128px"; // Adjust as needed
                 icon.style.marginBottom = "0.5rem";
                 card.appendChild(icon);
               }

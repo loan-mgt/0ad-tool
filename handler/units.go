@@ -10,6 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type UnitShortInfo struct {
+	Code         string `json:"code"`
+	Name         string `json:"name"`
+	Class        string `json:"class"`
+	HasEvolution bool   `json:"has_evolution"`
+	Icon         string `json:"icon"`
+}
+
 func GetUnitsHandler(c *gin.Context) {
 	unitsPath := "../templates/units"
 	civFolder := c.Param("civ_folder") // Use c.Param to get the path parameter
@@ -23,7 +31,7 @@ func GetUnitsHandler(c *gin.Context) {
 		return
 	}
 
-	var units []map[string]interface{}
+	var units []map[string]any
 	for _, file := range files {
 		if file.IsDir() || !strings.HasSuffix(file.Name(), ".xml") {
 			continue
@@ -31,9 +39,52 @@ func GetUnitsHandler(c *gin.Context) {
 		units = append(units, service.GetUnit(filepath.Join(civDir, file.Name())))
 	}
 
+	finalUnits := make(map[string]UnitShortInfo)
+
+	for _, unit := range units {
+		identity, ok := unit["Identity"].(map[string]any)
+		if !ok {
+			continue
+		}
+
+		specificName, ok := identity["SpecificName"].(string)
+		if !ok {
+			continue
+		}
+
+		code, ok := unit["code"].(string)
+		if !ok {
+			continue
+		}
+
+		if unitInfo, ok := finalUnits[code]; ok {
+			unitInfo.HasEvolution = true
+			finalUnits[code] = unitInfo
+			continue
+		}
+
+		icon, ok := identity["Icon"].(string)
+		if !ok {
+			icon = "" // Default to empty string if Icon is not found
+		}
+
+		class, ok := identity["GenericName"].(string)
+		if !ok {
+			continue
+		}
+
+		finalUnits[code] = UnitShortInfo{
+			Code:         code,
+			Name:         specificName,
+			Class:        class,
+			HasEvolution: false,
+			Icon:         icon,
+		}
+	}
+
 	c.Header("Access-Control-Allow-Origin", "*")
 	// c.JSON automatically sets Content-Type to application/json
-	c.JSON(http.StatusOK, units)
+	c.JSON(http.StatusOK, finalUnits)
 
 }
 

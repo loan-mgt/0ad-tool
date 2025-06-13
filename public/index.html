@@ -163,6 +163,7 @@
 
 <body x-data="{
     savedCiv: localStorage.getItem('selectedCiv'),
+    units: [],
 }" x-init="handleCivChange()">
     <header>
         <h1 class="text-2xl">0 A.D. Helper Tool </h1>
@@ -173,8 +174,10 @@
         <div id="{{.Code}}-option" data-value="{{.Name}}" data-code="{{.Code}}" x-on:click="savedCiv = '{{.Code}}'; 
     localStorage.setItem('selectedCiv', '{{.Code}}');
     handleCivChange();
-    " :class="savedCiv !== '{{.Code}}' || 'bg-gray-200'"
-            class="civ-option flex flex-col gap-2 rounded hover:bg-gray-300 px-2 py-2 cursor-pointer items-center w-23  ">
+    " 
+    :class="savedCiv !== '{{.Code}}' || 'bg-gray-200'"
+    @click="$dispatch('update-civ')"
+            class="civ-option flex flex-col gap-2 rounded hover:bg-gray-300 px-2 py-2 cursor-pointer items-center w-23">
             <img src="/static/emblems/{{lower .Name}}s.png" alt="{{.Name}} Emblem" class="w-10 h-10">
             <p class="text-xs">{{.Name}}</p>
         </div>
@@ -183,10 +186,17 @@
 
     <div class="loading-spinner" id="loading-spinner"></div>
 
-    <div class="main-content"> <!-- WRAPPER for units list and details -->
-        <section class="units-list" id="units-list">
-            <!-- Units will be listed here -->
-        </section>
+    <div class="main-content"> 
+        <div class="flex flex-wrap" @update-civ.window="console.log('Civ changed')"  id="units-list">
+            <template x-for="unit in units">
+                <div class="flex gap-1 p-2">
+                    <img :src="`/static/unit-icons/${unit.code}.png`" alt="" class="w-8 h-8"/>
+                    <p x-text="unit.name"></p>
+                    <p x-text="unit.class"></p>
+                </div>
+            </template>
+        </div>
+
         <section class="unit-details" id="unit-details" style="display:none;">
             <!-- Unit details will be shown here -->
         </section>
