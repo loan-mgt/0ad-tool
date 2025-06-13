@@ -56,6 +56,9 @@ func GetUnitsHandler(c *gin.Context) {
 		if !ok {
 			continue
 		}
+		if strings.HasSuffix(code, "_a") || strings.HasSuffix(code, "_b") || strings.HasSuffix(code, "_e") {
+			code = code[:len(code)-2]
+		}
 
 		if unitInfo, ok := finalUnits[code]; ok {
 			unitInfo.HasEvolution = true
@@ -68,7 +71,7 @@ func GetUnitsHandler(c *gin.Context) {
 			icon = "" // Default to empty string if Icon is not found
 		}
 
-		class, ok := identity["GenericName"].(string)
+		class, ok := identity["VisibleClasses"].(string)
 		if !ok {
 			continue
 		}
