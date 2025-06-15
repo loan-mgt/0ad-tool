@@ -11,13 +11,14 @@
 
 <body class="flex flex-col items-center gap-4 p-4 max-w-screen overflow-x-clip" x-data="{
         savedCiv: localStorage.getItem('selectedCiv'),
-        units: [],
+        unitsClass: {},
     }" x-init="$watch('savedCiv', () => $dispatch('update-civ'))">
-    <p x-text="units[0]"></p>
     <header>
         <h1 class="text-2xl">0 A.D. Helper Tool</h1>
         <p>Choose your civilisation and explore all units. Click a unit to see its stats.</p>
     </header>
+
+
 
     <div class="flex gap-1 align-center flex-wrap">
         {{range .Civs}}
@@ -31,25 +32,41 @@
         </div>
         {{end}}
     </div>
-    <p x-text="units[0]"></p>
     <div class="loading-spinner" id="loading-spinner"></div>
 
     <div class="main-content">
-        <div id="unitsList" class="flex flex-wrap gap-2" @update-civ.window="console.log('Civ changed');
-        units = await fetch(`/civilisations/${savedCiv}/units`).then(response => response.json())"
+        <div class="flex flex-col gap-5"
+            @update-civ.window="console.log('Civ changed');
+        unitsClass = await fetch(`/civilisations/${savedCiv}/units`).then(response => response.json()); console.log(unitsClass);"
             x-init="await $nextTick();$dispatch('update-civ');">
-            <template x-for="unit in units">
-                <div
-                    class="flex flex-col gap-1 p-2 bg-gray-100 rounded hover:shadow cursor-pointer w-42 h-55 relative">
-                    <img :src="`/static/${unit.icon}`" :alt="unit.name" class="w-full h-auto" />
+            <template x-for="(units, title) in unitsClass">
+                <template x-if="units.length">
 
-                    <p class="relative group w-full hover:z-10"
-                        x-html="`<span class='hidden group-hover:block text-nowrap bg-gray-200 w-fit pr-2 '>${unit.name}</span>
+                    
+                <div x-if="units.length" class="flex flex-col gap-2 w-full">
+
+                    <h2 class="text-2xl capitalize" x-text="title"></h2>
+                    <div class="flex flex-wrap gap-2">
+                        <template x-for="unit in units">
+                            <div
+                                class="flex flex-col gap-1 p-2 bg-gray-100 rounded hover:shadow cursor-pointer w-42 h-55 relative">
+                                <img :src="`/static/${unit.icon}`" :alt="unit.name" class="w-full h-auto" />
+
+                                <p class="relative group w-full hover:z-10" x-html="`<span class='hidden group-hover:block text-nowrap bg-gray-200 w-fit pr-2 '>${unit.name}</span>
                         <span class='block group-hover:hidden truncate'>${unit.name}</span>`"></p>
 
-                    <p class="truncate opacity-70" x-text="unit.class"></p>
+                                <p class="truncate opacity-70" x-text="unit.class"></p>
+                            </div>
+                        </template>
+                    </div>
+
+
                 </div>
+                </template>
+
+
             </template>
+
         </div>
 
         <section class="unit-details" id="unit-details" style="display:none;">

@@ -287,6 +287,9 @@
   .gap-4 {
     gap: calc(var(--spacing) * 4);
   }
+  .gap-5 {
+    gap: calc(var(--spacing) * 5);
+  }
   .truncate {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -357,6 +360,9 @@
   }
   .text-red-500 {
     color: var(--color-red-500);
+  }
+  .capitalize {
+    text-transform: capitalize;
   }
   .italic {
     font-style: italic;

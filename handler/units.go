@@ -18,6 +18,17 @@ type UnitShortInfo struct {
 	Icon         string `json:"icon"`
 }
 
+type UnitCategory struct {
+	Infantry []UnitShortInfo `json:"infantry"`
+	Cavalry  []UnitShortInfo `json:"cavalry"`
+	Champion []UnitShortInfo `json:"champion"`
+	Hero     []UnitShortInfo `json:"hero"`
+	Ship     []UnitShortInfo `json:"ship"`
+	Siege    []UnitShortInfo `json:"siege"`
+	Support  []UnitShortInfo `json:"support"`
+	Other    []UnitShortInfo `json:"other"`
+}
+
 func GetUnitsHandler(c *gin.Context) {
 	unitsPath := "../templates/units"
 	civFolder := c.Param("civ_folder") // Use c.Param to get the path parameter
@@ -56,14 +67,15 @@ func GetUnitsHandler(c *gin.Context) {
 		if !ok {
 			continue
 		}
-		if strings.HasSuffix(code, "_a") || strings.HasSuffix(code, "_b") || strings.HasSuffix(code, "_e") {
-			code = code[:len(code)-2]
+
+		if strings.HasSuffix(code, "_a") || strings.HasSuffix(code, "_e") || strings.HasSuffix(code, "_packed") || strings.HasSuffix(code, "_house") {
+			continue
 		}
 
-		if unitInfo, ok := finalUnits[code]; ok {
-			unitInfo.HasEvolution = true
-			finalUnits[code] = unitInfo
-			continue
+		hasEvolution := false
+		if strings.HasSuffix(code, "_unpacked") || strings.HasSuffix(code, "_b") {
+			code = code[:len(code)-2]
+			hasEvolution = true
 		}
 
 		icon, ok := identity["Icon"].(string)
@@ -80,14 +92,47 @@ func GetUnitsHandler(c *gin.Context) {
 			Code:         code,
 			Name:         specificName,
 			Class:        class,
-			HasEvolution: false,
+			HasEvolution: hasEvolution,
 			Icon:         icon,
+		}
+	}
+
+	res := UnitCategory{
+		Infantry: make([]UnitShortInfo, 0),
+		Cavalry:  make([]UnitShortInfo, 0),
+		Champion: make([]UnitShortInfo, 0),
+		Hero:     make([]UnitShortInfo, 0),
+		Ship:     make([]UnitShortInfo, 0),
+		Siege:    make([]UnitShortInfo, 0),
+		Support:  make([]UnitShortInfo, 0),
+		Other:    make([]UnitShortInfo, 0),
+	}
+
+	for code, unitInfo := range finalUnits {
+		unitCode := strings.ToLower(code)
+		switch {
+		case strings.Contains(unitCode, "infantry"):
+			res.Infantry = append(res.Infantry, unitInfo)
+		case strings.Contains(unitCode, "cavalry"):
+			res.Cavalry = append(res.Cavalry, unitInfo)
+		case strings.Contains(unitCode, "champion"):
+			res.Champion = append(res.Champion, unitInfo)
+		case strings.Contains(unitCode, "hero"):
+			res.Hero = append(res.Hero, unitInfo)
+		case strings.HasPrefix(unitCode, "ship"):
+			res.Ship = append(res.Ship, unitInfo)
+		case strings.HasPrefix(unitCode, "siege"):
+			res.Siege = append(res.Siege, unitInfo)
+		case strings.HasPrefix(unitCode, "support"):
+			res.Support = append(res.Support, unitInfo)
+		default:
+			res.Other = append(res.Other, unitInfo)
 		}
 	}
 
 	c.Header("Access-Control-Allow-Origin", "*")
 	// c.JSON automatically sets Content-Type to application/json
-	c.JSON(http.StatusOK, finalUnits)
+	c.JSON(http.StatusOK, res)
 
 }
 
