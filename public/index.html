@@ -12,7 +12,30 @@
 <body class="flex flex-col items-center gap-4 p-4 max-w-screen overflow-x-clip" x-data="{
         savedCiv: localStorage.getItem('selectedCiv'),
         unitsClass: {},
-    }" x-init="$watch('savedCiv', () => $dispatch('update-civ'))">
+        selectedUnit: null,
+        unitDetails: null,
+        unitDetailsArr: null,
+        displayVersion: 0,
+        async fetchUnits() {
+            try {
+                const response = await fetch(`/civilisations/${this.savedCiv}/units/${this.selectedUnit}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                this.unitDetailsArr = await response.json();
+                this.displayVersion = 0;
+                this.unitDetails = this.unitDetailsArr[0];
+            } catch (error) {
+                console.error('Error fetching units:', error);
+                this.unitDetailsArr = null;
+            }
+        },
+        setDiaplyVersion(version) {
+            this.displayVersion = version;
+            if (this.unitDetailsArr && this.unitDetailsArr.length > 0) {
+                this.unitDetails = this.unitDetailsArr[version];
+            }
+        },
+    }" x-init="$watch('savedCiv', () => $dispatch('update-civ'));
+    $watch('selectedUnit', () => {fetchUnits(); console.log('Unit selected:', selectedUnit)});">
     <header>
         <h1 class="text-2xl">0 A.D. Helper Tool</h1>
         <p>Choose your civilisation and explore all units. Click a unit to see its stats.</p>
@@ -34,44 +57,125 @@
     </div>
     <div class="loading-spinner" id="loading-spinner"></div>
 
-    <div class="main-content">
-        <div class="flex flex-col gap-5"
+    <div class="flex gap-5">
+        <section class="flex flex-col gap-5"
             @update-civ.window="console.log('Civ changed');
         unitsClass = await fetch(`/civilisations/${savedCiv}/units`).then(response => response.json()); console.log(unitsClass);"
             x-init="await $nextTick();$dispatch('update-civ');">
             <template x-for="(units, title) in unitsClass">
                 <template x-if="units.length">
 
-                    
-                <div x-if="units.length" class="flex flex-col gap-2 w-full">
 
-                    <h2 class="text-2xl capitalize" x-text="title"></h2>
-                    <div class="flex flex-wrap gap-2">
-                        <template x-for="unit in units">
-                            <div
-                                class="flex flex-col gap-1 p-2 bg-gray-100 rounded hover:shadow cursor-pointer w-42 h-55 relative">
-                                <img :src="`/static/${unit.icon}`" :alt="unit.name" class="w-full h-auto" />
+                    <div class="flex flex-col gap-2 w-full">
 
-                                <p class="relative group w-full hover:z-10" x-html="`<span class='hidden group-hover:block text-nowrap bg-gray-200 w-fit pr-2 '>${unit.name}</span>
+                        <h2 class="text-2xl capitalize" x-text="title"></h2>
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="unit in units">
+                                <div @click="selectedUnit = unit.code;"
+                                    class="flex flex-col gap-1 p-2 bg-gray-100 rounded hover:shadow cursor-pointer w-42 h-55 relative">
+                                    <img :src="`/static/${unit.icon}`" :alt="unit.name" class="w-full h-auto" />
+
+                                    <p class="relative group w-full hover:z-10" x-html="`<span class='hidden group-hover:block text-nowrap bg-gray-200 w-fit pr-2 '>${unit.name}</span>
                         <span class='block group-hover:hidden truncate'>${unit.name}</span>`"></p>
 
-                                <p class="truncate opacity-70" x-text="unit.class"></p>
-                            </div>
-                        </template>
+                                    <p class="truncate opacity-70" x-text="unit.class"></p>
+                                </div>
+                            </template>
+                        </div>
+
+
                     </div>
-
-
-                </div>
                 </template>
 
 
             </template>
 
-        </div>
-
-        <section class="unit-details" id="unit-details" style="display:none;">
-            <!-- Unit details will be shown here -->
         </section>
+        <template x-if="unitDetailsArr">
+            <aside class="flex flex-col gap-4 w-96 p-4 bg-gray-50 rounded shadow-lg h-fit">
+                <template x-if="unitDetails.Identity.Rank">
+                    <div class="flex gap-2">
+                        <template x-for="(rank, idx) in ['Basic', 'Advenced', 'Elite']">
+                            <button :class="idx === displayVersion && 'bg-gray-400'"
+                                class="bg-gray-200 rounded p-1 cursor-pointer"
+                                @click="setDiaplyVersion(idx); console.log('change to', idx);" x-text="rank"></button>
+                        </template>
+                    </div>
+
+                </template>
+                <template x-if="unitDetails.Pack">
+                    <div class="flex gap-2">
+                        <template x-for="(rank, idx) in ['Unpacked', 'Packed']">
+                            <button :class="idx === displayVersion && 'bg-gray-400'"
+                                class="bg-gray-200 rounded p-1 cursor-pointer"
+                                @click="setDiaplyVersion(idx);" x-text="rank"></button>
+                        </template>
+                    </div>
+
+                </template>
+                <h2 class="text-xl font-bold" x-text="unitDetails.Identity.SpecificName"></h2>
+                <div class="flex items-start gap-4"></div>
+                <img :src="`/static/${unitDetails.Identity.Icon}`" :alt="unitDetails.Identity.GenericName"
+                    class="w-40 h-40" />
+                <div class="flex flex-col">
+                    <p class="font-semibold" x-text="unitDetails.Identity.GenericName"></p>
+                    <p class="text-sm" x-text="unitDetails.Identity.Tooltip"></p>
+                    <p class="text-xs text-gray-600" x-text="`Classes: ${unitDetails.Identity.VisibleClasses}`"></p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div class="bg-gray-100 p-2 rounded">
+                        <h3 class="font-bold">Cost</h3>
+                        <div class="flex gap-2">
+                            <span x-text="`Food: ${unitDetails.Cost.Resources.food}`"></span>
+                            <span x-text="`Wood: ${unitDetails.Cost.Resources.wood}`"></span>
+                            <span x-text="`Metal: ${unitDetails.Cost.Resources.metal}`"></span>
+                        </div>
+                        <p x-text="`Population: ${unitDetails.Cost.Population}`"></p>
+                        <p x-text="`Build Time: ${unitDetails.Cost.BuildTime}s`"></p>
+                    </div>
+
+                    <div class="bg-gray-100 p-2 rounded">
+                        <h3 class="font-bold">Health</h3>
+                        <p x-text="`HP: ${unitDetails.Health.Max}`"></p>
+                        <p
+                            x-text="`Armor: ${unitDetails.Resistance.Entity.Damage.Hack} hack, ${unitDetails.Resistance.Entity.Damage.Pierce} pierce`">
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 p-2 rounded text-sm">
+                    <h3 class="font-bold">Attack</h3>
+                    <template x-if="unitDetails.Attack">
+                        <div>
+                            <template x-for="[attackType, attack] of Object.entries(unitDetails.Attack)">
+                                <div :key="attackType">
+                                    <p x-text="`${attack.AttackName || attackType}: ${
+                    attack.Damage 
+                        ? [
+                            attack.Damage.Hack ? attack.Damage.Hack + ' hack' : '',
+                            attack.Damage.Pierce ? attack.Damage.Pierce + ' pierce' : '',
+                            attack.Damage.Crush ? attack.Damage.Crush + ' crush' : ''
+                          ].filter(Boolean).join(', ')
+                        : (attack.Capture ? attack.Capture + ' capture' : '')
+                }`"></p>
+                                    <p x-text="`Range: ${attack.MaxRange}`"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                </div>
+
+                <div class="bg-gray-100 p-2 rounded text-sm">
+                    <h3 class="font-bold">Movement</h3>
+                    <p x-text="`Speed: ${unitDetails.UnitMotion.WalkSpeed}`"></p>
+                </div>
+            </aside>
+        </template>
+    </div>
+
+    </template>
     </div>
 
     <script src="/static/main.js"></script>

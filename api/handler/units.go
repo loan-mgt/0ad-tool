@@ -73,8 +73,13 @@ func GetUnitsHandler(c *gin.Context) {
 		}
 
 		hasEvolution := false
-		if strings.HasSuffix(code, "_unpacked") || strings.HasSuffix(code, "_b") {
-			code = code[:len(code)-2]
+		if strings.HasSuffix(code, "_b") {
+			code = strings.TrimSuffix(code, "_b")
+			hasEvolution = true
+		}
+
+		if strings.HasSuffix(code, "_unpacked") {
+			code = strings.TrimSuffix(code, "_unpacked")
 			hasEvolution = true
 		}
 
@@ -143,12 +148,59 @@ func GetUnitHandler(c *gin.Context) {
 	civDir := filepath.Join(unitsPath, civFolder)
 	unitFilePath := filepath.Join(civDir, unitCode+".xml")
 
-	if _, err := os.Stat(unitFilePath); os.IsNotExist(err) {
+	// Try the main file, then _b, then _packed
+	tryFiles := []string{
+		unitFilePath,
+		filepath.Join(civDir, unitCode+"_b.xml"),
+		filepath.Join(civDir, unitCode+"_unpacked.xml"),
+	}
+
+	var foundFile string
+	for _, f := range tryFiles {
+		if _, err := os.Stat(f); err == nil {
+			foundFile = f
+			break
+		}
+	}
+
+	if foundFile == "" {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Unit not found"})
 		return
 	}
 
-	unit := service.GetUnit(unitFilePath)
+	units := []string{}
+	switch {
+	case strings.HasSuffix(foundFile, "_b.xml"):
+		units = append(units, foundFile)
+		units = append(units, strings.TrimSuffix(foundFile, "_b.xml")+"_a.xml")
+		units = append(units, strings.TrimSuffix(foundFile, "_b.xml")+"_e.xml")
+	case strings.HasSuffix(foundFile, "_unpacked.xml"):
+		units = append(units, foundFile)
+		units = append(units, strings.TrimSuffix(foundFile, "_unpacked.xml")+"_packed.xml")
+	default:
+		units = append(units, foundFile)
+	}
+
+	res := make([]map[string]any, 0)
+	for _, unit := range units {
+		res = append(res, service.GetUnit(unit))
+	}
+
+	keysToKeep := []string{
+		"Identity", "Health", "Cost", "Attack",
+		"Resistance", "ResourceGatherer", "Vision", "UnitMotion", "Pack",
+	}
+
+	cleanedUnit := make([]map[string]any, len(res))
+	for i, unit := range res {
+		cleanedUnit[i] = make(map[string]any) // Initialize each map in the slice
+		for _, key := range keysToKeep {
+			if value, ok := unit[key].(map[string]any); ok {
+				cleanedUnit[i][key] = value
+			}
+		}
+	}
+
 	c.Header("Access-Control-Allow-Origin", "*")
-	c.JSON(http.StatusOK, unit)
+	c.JSON(http.StatusOK, cleanedUnit)
 }

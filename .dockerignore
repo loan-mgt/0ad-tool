@@ -1,0 +1,12 @@
+public/node_modules/
+node_modules/
+*.log
+*.tmp
+*.cache
+.git/
+.gitignore
+Dockerfile
+docker-compose.yml
+docker-compose.dev.yml
+public/emblems/
+public/*

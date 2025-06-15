@@ -8,15 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// VerifyCivFolderMiddleware checks if the 'civ_folder' parameter corresponds to an existing directory.
-// It assumes the API binary runs from a directory where '../templates/units/' is a valid relative path
-// to the templates directory (e.g., running from 'api/' means templates are at '/workspaces/0ad-tool/templates/units/').
 func VerifyCivFolderMiddleware(c *gin.Context) {
 	civFolder := c.Param("civ_folder")
-	// This path construction assumes the executable is run from a directory
-	// such that "../templates/units/" correctly resolves.
-	// For example, if the binary is in /workspaces/0ad-tool/api/,
-	// this will point to /workspaces/0ad-tool/templates/units/.
 	basePath := "../templates/units/"
 	civDirPath := basePath + civFolder
 
