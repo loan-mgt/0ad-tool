@@ -1,4 +1,4 @@
-public/node_modules/
+public/node_modules/*
 node_modules/
 *.log
 *.tmp
@@ -8,5 +8,3 @@ node_modules/
 Dockerfile
 docker-compose.yml
 docker-compose.dev.yml
-public/emblems/
-public/*
