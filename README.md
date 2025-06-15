@@ -1,20 +1,31 @@
 # 0ad-tool
 
+![illustration](.github/image.png)
 
-clean up data xml
+## Workflow
+
+### Extract Unit Data from Game Files
+
+To clean up data XML files and remove cached files, run:
+
+```sh
 find . -type f -name '*.cached.xmb' -delete
+```
 
-# Icon
+#### Unit Icons
 
-path to icon:
-from: [gitea](https://gitea.wildfiregames.com/0ad/0ad/src/branch/main/binaries/data/mods/public/art/textures/ui/session/portraits/units)
-`binaries/data/mods/public/art/textures/ui/session/portraits/units`
+Unit icon path:
 
+```
+binaries/data/mods/public/art/textures/ui/session/portraits/units
+```
 
-# Dev
+[Browse icons on Gitea](https://gitea.wildfiregames.com/0ad/0ad/src/branch/main/binaries/data/mods/public/art/textures/ui/session/portraits/units)
 
-`podman build -t 0ad .`
+## Development
 
-`podman run -it -p 8080:8081 --rm 0ad`
+To build Tailwind CSS in watch mode:
 
-`npx @tailwindcss/cli -i styles/input.css -o styles/output.css --watch`
+```sh
+npx @tailwindcss/cli -i styles/input.css -o styles/output.css --watch
+```
