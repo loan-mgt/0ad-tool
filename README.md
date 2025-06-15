@@ -17,4 +17,4 @@ from: [gitea](https://gitea.wildfiregames.com/0ad/0ad/src/branch/main/binaries/d
 
 `podman run -it -p 8080:8081 --rm 0ad`
 
-`npx @tailwindcss/cli -i public/styles/input.css -o public/styles/output.css --watch`
+`npx @tailwindcss/cli -i styles/input.css -o styles/output.css --watch`

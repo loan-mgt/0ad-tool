@@ -9,13 +9,11 @@
     <script defer src="/static/script/cdn.min.js"></script>
 </head>
 
-<body
- class="flex flex-col items-center gap-4 p-4"
- x-data="{
+<body class="flex flex-col items-center gap-4 p-4 max-w-screen overflow-x-clip" x-data="{
         savedCiv: localStorage.getItem('selectedCiv'),
         units: [],
-    }" x-init="$dispatch('update-civ')">
-<p x-text="units[0]"></p>
+    }" x-init="$watch('savedCiv', () => $dispatch('update-civ'))">
+    <p x-text="units[0]"></p>
     <header>
         <h1 class="text-2xl">0 A.D. Helper Tool</h1>
         <p>Choose your civilisation and explore all units. Click a unit to see its stats.</p>
@@ -23,27 +21,33 @@
 
     <div class="flex gap-1 align-center flex-wrap">
         {{range .Civs}}
-        <div id="{{.Code}}-option" data-value="{{.Name}}" data-code="{{.Code}}" x-on:click="
+        <div id="{{.Code}}-option" data-value="{{.Name}}" data-code="{{.Code}}" @click="
                 savedCiv = '{{.Code}}'; 
                 localStorage.setItem('selectedCiv', '{{.Code}}');
-            " :class="savedCiv !== '{{.Code}}' || 'bg-gray-200'" @click="$dispatch('update-civ')"
+            " :class="savedCiv !== '{{.Code}}' || 'bg-gray-200'"
             class="civ-option flex flex-col gap-2 rounded hover:bg-gray-300 px-2 py-2 cursor-pointer items-center w-23">
             <img src="/static/emblems/{{lower .Name}}s.png" alt="{{.Name}} Emblem" class="w-10 h-10" />
             <p class="text-xs">{{.Name}}</p>
         </div>
         {{end}}
     </div>
-<p x-text="units[0]"></p>
+    <p x-text="units[0]"></p>
     <div class="loading-spinner" id="loading-spinner"></div>
 
     <div class="main-content">
         <div id="unitsList" class="flex flex-wrap gap-2" @update-civ.window="console.log('Civ changed');
-        units = await fetch(`/civilisations/${savedCiv}/units`).then(response => response.json())">
+        units = await fetch(`/civilisations/${savedCiv}/units`).then(response => response.json())"
+            x-init="await $nextTick();$dispatch('update-civ');">
             <template x-for="unit in units">
-                <div class="flex flex-col gap-1 p-2 bg-gray-100 rounded hover:shadow cursor-pointer">
-                    <img :src="`/static/${unit.icon}`" alt="" class="w-36 h-36" />
-                    <p x-text="unit.name"></p>
-                    <p x-text="unit.class"></p>
+                <div
+                    class="flex flex-col gap-1 p-2 bg-gray-100 rounded hover:shadow cursor-pointer w-42 h-55 relative">
+                    <img :src="`/static/${unit.icon}`" :alt="unit.name" class="w-full h-auto" />
+
+                    <p class="relative group w-full hover:z-10"
+                        x-html="`<span class='hidden group-hover:block text-nowrap bg-gray-200 w-fit pr-2 '>${unit.name}</span>
+                        <span class='block group-hover:hidden truncate'>${unit.name}</span>`"></p>
+
+                    <p class="truncate opacity-70" x-text="unit.class"></p>
                 </div>
             </template>
         </div>
