@@ -16,6 +16,7 @@
         unitDetails: null,
         unitDetailsArr: null,
         displayVersion: 0,
+        ressources: [],
         async fetchUnits() {
             try {
                 const response = await fetch(`/civilisations/${this.savedCiv}/units/${this.selectedUnit}`);
@@ -23,6 +24,7 @@
                 this.unitDetailsArr = await response.json();
                 this.displayVersion = 0;
                 this.unitDetails = this.unitDetailsArr[0];
+                this.updateRessources();
             } catch (error) {
                 console.error('Error fetching units:', error);
                 this.unitDetailsArr = null;
@@ -34,6 +36,14 @@
                 this.unitDetails = this.unitDetailsArr[version];
             }
         },
+        updateRessources() {
+            this.ressources = [
+                { img: '/static/assets/icons/population.png', value: this.unitDetails.Cost.Population || 0 },
+                { img: '/static/assets/icons/food.png', value: this.unitDetails.Cost.Resources.food || 0 },
+                { img: '/static/assets/icons/wood.png', value: this.unitDetails.Cost.Resources.wood || 0 },
+                { img: '/static/assets/icons/metal.png', value: this.unitDetails.Cost.Resources.metal || 0 },
+            ];
+        }
     }" x-init="$watch('savedCiv', () => $dispatch('update-civ'));
     $watch('selectedUnit', () => {fetchUnits(); console.log('Unit selected:', selectedUnit)});">
     <header>
@@ -50,7 +60,7 @@
                 localStorage.setItem('selectedCiv', '{{.Code}}');
             " :class="savedCiv !== '{{.Code}}' || 'bg-gray-200'"
             class="civ-option flex flex-col gap-2 rounded hover:bg-gray-300 px-2 py-2 cursor-pointer items-center w-23">
-            <img src="/static/emblems/{{lower .Name}}s.png" alt="{{.Name}} Emblem" class="w-10 h-10" />
+            <img src="/static/assets/emblems/{{lower .Name}}s.png" alt="{{.Name}} Emblem" class="w-10 h-10" />
             <p class="text-xs">{{.Name}}</p>
         </div>
         {{end}}
@@ -73,9 +83,10 @@
                             <h2 class="text-2xl capitalize" x-text="title"></h2>
                             <div class="flex flex-wrap gap-2">
                                 <template x-for="unit in units">
-                                    <div @click="selectedUnit = unit.code;"
+                                    <div :debug="unit.code" @click="selectedUnit = unit.code;"
                                         class="flex flex-col gap-1 p-2 bg-gray-100 rounded hover:shadow cursor-pointer w-42 h-55 relative">
-                                        <img :src="`/static/${unit.icon}`" :alt="unit.name" class="w-full h-auto" />
+                                        <img :src="`/static/assets/${unit.icon}`" :alt="unit.name"
+                                            class="w-full h-auto" />
 
                                         <p class="relative group w-full hover:z-10" x-html="`<span class='hidden group-hover:block text-nowrap bg-gray-200 w-fit pr-2 '>${unit.name}</span>
                         <span class='block group-hover:hidden truncate'>${unit.name}</span>`"></p>
@@ -117,9 +128,34 @@
 
                 </template>
                 <h2 class="text-xl font-bold" x-text="unitDetails.Identity.SpecificName"></h2>
-                <div class="flex items-start gap-4"></div>
-                <img :src="`/static/${unitDetails.Identity.Icon}`" :alt="unitDetails.Identity.GenericName"
-                    class="w-40 h-40" />
+                <div class="flex items-start gap-4">
+                    <img :src="`/static/assets/${unitDetails.Identity.Icon}`" :alt="unitDetails.Identity.GenericName"
+                        class="w-40 h-40" />
+                        <div class="flex flex-col gap-2">
+                    <div class="flex gap-2">
+                        <template x-for="resource in ressources">
+
+                            <div class="flex gap-1 items-center">
+                                <img :src="resource.img" alt="" class="w-8 h-8" />
+                                <span x-text="resource.value"></span>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="flex gap-2" x-data="{ techPhase: {
+                            phase_town: '/static/assets/icons/town_phase.png',
+                            phase_city: '/static/assets/icons/city_phase.png',
+                        }}">
+                        <template x-for="tech in Object.keys(techPhase)">
+                            <template x-if="unitDetails.Identity.Requirements.Techs.includes(tech)">
+                                <img :src="techPhase[tech]" :alt="tech" class="w-8 h-8" x-show="techPhase[tech]" />
+                            </template>
+                        </template>
+                    </div>
+                    </div>
+
+
+
+                </div>
                 <div class="flex flex-col">
                     <p class="font-semibold" x-text="unitDetails.Identity.GenericName"></p>
                     <p class="text-sm" x-text="unitDetails.Identity.Tooltip"></p>
@@ -127,16 +163,7 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 text-sm">
-                    <div class="bg-gray-100 p-2 rounded">
-                        <h3 class="font-bold">Cost</h3>
-                        <div class="flex gap-2">
-                            <span x-text="`Food: ${unitDetails.Cost.Resources.food}`"></span>
-                            <span x-text="`Wood: ${unitDetails.Cost.Resources.wood}`"></span>
-                            <span x-text="`Metal: ${unitDetails.Cost.Resources.metal}`"></span>
-                        </div>
-                        <p x-text="`Population: ${unitDetails.Cost.Population}`"></p>
-                        <p x-text="`Build Time: ${unitDetails.Cost.BuildTime}s`"></p>
-                    </div>
+
 
                     <div class="bg-gray-100 p-2 rounded">
                         <h3 class="font-bold">Health</h3>
@@ -146,29 +173,60 @@
                         </p>
                     </div>
                 </div>
-
                 <div class="bg-gray-100 p-2 rounded text-sm">
                     <h3 class="font-bold">Attack</h3>
                     <template x-if="unitDetails.Attack">
                         <div>
                             <template x-for="[attackType, attack] of Object.entries(unitDetails.Attack)">
-                                <div :key="attackType">
-                                    <p x-text="`${attack.AttackName || attackType}: ${
-                    attack.Damage 
-                        ? [
-                            attack.Damage.Hack ? attack.Damage.Hack + ' hack' : '',
-                            attack.Damage.Pierce ? attack.Damage.Pierce + ' pierce' : '',
-                            attack.Damage.Crush ? attack.Damage.Crush + ' crush' : ''
-                          ].filter(Boolean).join(', ')
-                        : (attack.Capture ? attack.Capture + ' capture' : '')
-                }`"></p>
-                                    <p x-text="`Range: ${attack.MaxRange}`"></p>
-                                </div>
+                                <template x-if="attackType !== 'Slaughter' && !attack.Capture">
+                                    <div :key="attackType">
+                                        <p x-text="`${attack.AttackName || attackType}: ${
+                        attack.Damage 
+                            ? [
+                                attack.Damage.Hack ? attack.Damage.Hack + ' hack' : '',
+                                attack.Damage.Pierce ? attack.Damage.Pierce + ' pierce' : '',
+                                attack.Damage.Crush ? attack.Damage.Crush + ' crush' : ''
+                              ].filter(Boolean).join(', ')
+                            : ''
+                    }`"></p>
+                                        <p x-text="`Range: ${attack.MaxRange}`"></p>
+                                        <p x-text="`RepeatTime: ${attack.RepeatTime}`"></p>
+                                        <p x-text="`Score: ${
+                                            (
+                                                    (
+                                                        (Number(attack.Damage.Hack) || 0) +
+                                                        (Number(attack.Damage.Pierce) || 0) +
+                                                        (Number(attack.Damage.Crush) || 0)
+                                                    ) / (Number(attack.RepeatTime) || 1)
+                                                ).toFixed(3)
+                                        }`"></p>
+                                    </div>
+                                </template>
                             </template>
                         </div>
                     </template>
-
                 </div>
+
+                <template x-if="unitDetails.Attack && Object.entries(unitDetails.Attack).some(([attackType, attack]) => attackType === 'Slaughter' || attack.Capture)">
+                    <div class="bg-gray-100 p-2 rounded text-sm">
+                        <h3 class="font-bold">Special Actions</h3>
+                        <div>
+                            <template x-for="[attackType, attack] of Object.entries(unitDetails.Attack)">
+                                <template x-if="attackType === 'Slaughter' || attack.Capture">
+                                    <div :key="attackType">
+                                        <p x-text="`${attack.AttackName || attackType}: ${
+                                            attack.Capture 
+                                                ? attack.Capture + ' capture'
+                                                : (attack.Damage && attack.Damage.Hack ? attack.Damage.Hack + ' hack' : '')
+                                        }`"></p>
+                                        <p x-text="attack.MaxRange ? `Range: ${attack.MaxRange}` : ''"></p>
+                                        <p x-text="attack.RepeatTime ? `RepeatTime: ${attack.RepeatTime}` : ''"></p>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                </template>
 
                 <div class="bg-gray-100 p-2 rounded text-sm">
                     <h3 class="font-bold">Movement</h3>

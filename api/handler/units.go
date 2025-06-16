@@ -68,7 +68,17 @@ func GetUnitsHandler(c *gin.Context) {
 			continue
 		}
 
-		if strings.HasSuffix(code, "_a") || strings.HasSuffix(code, "_e") || strings.HasSuffix(code, "_packed") || strings.HasSuffix(code, "_house") {
+		// not handling these case
+		if strings.HasSuffix(code, "_trireme") {
+			code = strings.TrimSuffix(code, "_trireme")
+		}
+
+		if strings.HasSuffix(code, "_a") || strings.HasSuffix(code, "_e") || strings.HasSuffix(code, "_packed") || strings.HasSuffix(code, "_house") || strings.HasSuffix(code, "_pike") || strings.HasSuffix(code, "_infantry") || strings.HasSuffix(code, "_fire_fire") {
+			continue
+		}
+
+		// skip champion variants
+		if code == "hero_boudicca_cavalry_javelineer" || code == "hero_boudicca_sword" || code == "hero_wei_qing_horse" || code == "hero_wei_qing_chariot" || code == "hero_liu_bang_horse" || code == "hero_han_xin_horse" || code == "hero_xerxes_i_chariot" {
 			continue
 		}
 
@@ -116,20 +126,42 @@ func GetUnitsHandler(c *gin.Context) {
 	for code, unitInfo := range finalUnits {
 		unitCode := strings.ToLower(code)
 		switch {
-		case strings.Contains(unitCode, "infantry"):
-			res.Infantry = append(res.Infantry, unitInfo)
-		case strings.Contains(unitCode, "cavalry"):
-			res.Cavalry = append(res.Cavalry, unitInfo)
-		case strings.Contains(unitCode, "champion"):
-			res.Champion = append(res.Champion, unitInfo)
 		case strings.Contains(unitCode, "hero"):
 			res.Hero = append(res.Hero, unitInfo)
+			break
+		case strings.Contains(unitCode, "champion"):
+			res.Champion = append(res.Champion, unitInfo)
+			break
+		case strings.Contains(unitCode, "infantry"):
+			res.Infantry = append(res.Infantry, unitInfo)
+			break
+		case strings.Contains(unitCode, "skirmisher"):
+			res.Infantry = append(res.Infantry, unitInfo)
+			break
+		case strings.Contains(unitCode, "hoplite"):
+			res.Infantry = append(res.Infantry, unitInfo)
+			break
+		case strings.Contains(unitCode, "arstibara"):
+			res.Infantry = append(res.Infantry, unitInfo)
+			break
+		case strings.Contains(unitCode, "cavalry"):
+			res.Cavalry = append(res.Cavalry, unitInfo)
+			break
 		case strings.HasPrefix(unitCode, "ship"):
 			res.Ship = append(res.Ship, unitInfo)
+			break
 		case strings.HasPrefix(unitCode, "siege"):
 			res.Siege = append(res.Siege, unitInfo)
+			break
 		case strings.HasPrefix(unitCode, "support"):
 			res.Support = append(res.Support, unitInfo)
+			break
+		case strings.HasPrefix(unitCode, "elephant"):
+			res.Infantry = append(res.Infantry, unitInfo)
+			break
+		case strings.HasPrefix(unitCode, "war"):
+			res.Infantry = append(res.Infantry, unitInfo)
+			break
 		default:
 			res.Other = append(res.Other, unitInfo)
 		}
