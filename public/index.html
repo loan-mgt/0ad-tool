@@ -28,7 +28,7 @@
                 this.unitDetailsArr = null;
             }
         },
-        setDiaplyVersion(version) {
+        setDisplayVersion(version) {
             this.displayVersion = version;
             if (this.unitDetailsArr && this.unitDetailsArr.length > 0) {
                 this.unitDetails = this.unitDetailsArr[version];
@@ -58,47 +58,50 @@
     <div class="loading-spinner" id="loading-spinner"></div>
 
     <div class="flex gap-5">
-        <section class="flex flex-col gap-5"
-            @update-civ.window="console.log('Civ changed');
+        <template x-if="savedCiv">
+
+            <section class="flex flex-col gap-5"
+                @update-civ.window="console.log('Civ changed');
         unitsClass = await fetch(`/civilisations/${savedCiv}/units`).then(response => response.json()); console.log(unitsClass);"
-            x-init="await $nextTick();$dispatch('update-civ');">
-            <template x-for="(units, title) in unitsClass">
-                <template x-if="units.length">
+                x-init="await $nextTick();$dispatch('update-civ');">
+                <template x-for="(units, title) in unitsClass">
+                    <template x-if="units.length">
 
 
-                    <div class="flex flex-col gap-2 w-full">
+                        <div class="flex flex-col gap-2 w-full">
 
-                        <h2 class="text-2xl capitalize" x-text="title"></h2>
-                        <div class="flex flex-wrap gap-2">
-                            <template x-for="unit in units">
-                                <div @click="selectedUnit = unit.code;"
-                                    class="flex flex-col gap-1 p-2 bg-gray-100 rounded hover:shadow cursor-pointer w-42 h-55 relative">
-                                    <img :src="`/static/${unit.icon}`" :alt="unit.name" class="w-full h-auto" />
+                            <h2 class="text-2xl capitalize" x-text="title"></h2>
+                            <div class="flex flex-wrap gap-2">
+                                <template x-for="unit in units">
+                                    <div @click="selectedUnit = unit.code;"
+                                        class="flex flex-col gap-1 p-2 bg-gray-100 rounded hover:shadow cursor-pointer w-42 h-55 relative">
+                                        <img :src="`/static/${unit.icon}`" :alt="unit.name" class="w-full h-auto" />
 
-                                    <p class="relative group w-full hover:z-10" x-html="`<span class='hidden group-hover:block text-nowrap bg-gray-200 w-fit pr-2 '>${unit.name}</span>
+                                        <p class="relative group w-full hover:z-10" x-html="`<span class='hidden group-hover:block text-nowrap bg-gray-200 w-fit pr-2 '>${unit.name}</span>
                         <span class='block group-hover:hidden truncate'>${unit.name}</span>`"></p>
 
-                                    <p class="truncate opacity-70" x-text="unit.class"></p>
-                                </div>
-                            </template>
+                                        <p class="truncate opacity-70" x-text="unit.class"></p>
+                                    </div>
+                                </template>
+                            </div>
+
+
                         </div>
+                    </template>
 
 
-                    </div>
                 </template>
 
-
-            </template>
-
-        </section>
+            </section>
+        </template>
         <template x-if="unitDetailsArr">
-            <aside class="flex flex-col gap-4 w-96 p-4 bg-gray-50 rounded shadow-lg h-fit">
+            <aside class="flex flex-col gap-4 w-150 max-w-1/2 p-4 bg-gray-50 rounded shadow-lg h-fit sticky top-5 ">
                 <template x-if="unitDetails.Identity.Rank">
                     <div class="flex gap-2">
-                        <template x-for="(rank, idx) in ['Basic', 'Advenced', 'Elite']">
+                        <template x-for="(rank, idx) in ['Basic', 'Advanced', 'Elite']">
                             <button :class="idx === displayVersion && 'bg-gray-400'"
                                 class="bg-gray-200 rounded p-1 cursor-pointer"
-                                @click="setDiaplyVersion(idx); console.log('change to', idx);" x-text="rank"></button>
+                                @click="setDisplayVersion(idx); console.log('change to', idx);" x-text="rank"></button>
                         </template>
                     </div>
 
@@ -107,8 +110,8 @@
                     <div class="flex gap-2">
                         <template x-for="(rank, idx) in ['Unpacked', 'Packed']">
                             <button :class="idx === displayVersion && 'bg-gray-400'"
-                                class="bg-gray-200 rounded p-1 cursor-pointer"
-                                @click="setDiaplyVersion(idx);" x-text="rank"></button>
+                                class="bg-gray-200 rounded p-1 cursor-pointer" @click="setDisplayVersion(idx);"
+                                x-text="rank"></button>
                         </template>
                     </div>
 

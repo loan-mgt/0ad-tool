@@ -186,32 +186,17 @@
   .visible {
     visibility: visible;
   }
-  .absolute {
-    position: absolute;
-  }
   .relative {
     position: relative;
   }
-  .z-10 {
-    z-index: 10;
+  .sticky {
+    position: sticky;
   }
-  .z-100 {
-    z-index: 100;
+  .top-0 {
+    top: calc(var(--spacing) * 0);
   }
-  .mr-1 {
-    margin-right: calc(var(--spacing) * 1);
-  }
-  .mr-2 {
-    margin-right: calc(var(--spacing) * 2);
-  }
-  .mb-1 {
-    margin-bottom: calc(var(--spacing) * 1);
-  }
-  .mb-2 {
-    margin-bottom: calc(var(--spacing) * 2);
-  }
-  .mb-3 {
-    margin-bottom: calc(var(--spacing) * 3);
+  .top-5 {
+    top: calc(var(--spacing) * 5);
   }
   .block {
     display: block;
@@ -228,44 +213,17 @@
   .inline {
     display: inline;
   }
-  .inline-flex {
-    display: inline-flex;
-  }
   .table {
     display: table;
-  }
-  .h-4 {
-    height: calc(var(--spacing) * 4);
   }
   .h-10 {
     height: calc(var(--spacing) * 10);
   }
-  .h-20 {
-    height: calc(var(--spacing) * 20);
-  }
-  .h-36 {
-    height: calc(var(--spacing) * 36);
-  }
-  .h-38 {
-    height: calc(var(--spacing) * 38);
-  }
   .h-40 {
     height: calc(var(--spacing) * 40);
   }
-  .h-46 {
-    height: calc(var(--spacing) * 46);
-  }
-  .h-52 {
-    height: calc(var(--spacing) * 52);
-  }
   .h-55 {
     height: calc(var(--spacing) * 55);
-  }
-  .h-58 {
-    height: calc(var(--spacing) * 58);
-  }
-  .h-62 {
-    height: calc(var(--spacing) * 62);
   }
   .h-auto {
     height: auto;
@@ -273,20 +231,11 @@
   .h-fit {
     height: fit-content;
   }
-  .w-4 {
-    width: calc(var(--spacing) * 4);
-  }
   .w-10 {
     width: calc(var(--spacing) * 10);
   }
-  .w-20 {
-    width: calc(var(--spacing) * 20);
-  }
   .w-23 {
     width: calc(var(--spacing) * 23);
-  }
-  .w-36 {
-    width: calc(var(--spacing) * 36);
   }
   .w-40 {
     width: calc(var(--spacing) * 40);
@@ -294,11 +243,8 @@
   .w-42 {
     width: calc(var(--spacing) * 42);
   }
-  .w-80 {
-    width: calc(var(--spacing) * 80);
-  }
-  .w-96 {
-    width: calc(var(--spacing) * 96);
+  .w-150 {
+    width: calc(var(--spacing) * 150);
   }
   .w-fit {
     width: fit-content;
@@ -306,8 +252,11 @@
   .w-full {
     width: 100%;
   }
-  .max-w-full {
-    max-width: 100%;
+  .max-w-1 {
+    max-width: calc(var(--spacing) * 1);
+  }
+  .max-w-1\/2 {
+    max-width: calc(1/2 * 100%);
   }
   .max-w-screen {
     max-width: 100vw;
@@ -356,9 +305,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .overflow-clip {
-    overflow: clip;
-  }
   .overflow-x-clip {
     overflow-x: clip;
   }
@@ -368,13 +314,6 @@
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
-  }
-  .border-b {
-    border-bottom-style: var(--tw-border-style);
-    border-bottom-width: 1px;
-  }
-  .border-gray-200 {
-    border-color: var(--color-gray-200);
   }
   .bg-gray-50 {
     background-color: var(--color-gray-50);
@@ -387,9 +326,6 @@
   }
   .bg-gray-400 {
     background-color: var(--color-gray-400);
-  }
-  .bg-red-500 {
-    background-color: var(--color-red-500);
   }
   .p-1 {
     padding: calc(var(--spacing) * 1);
@@ -406,17 +342,8 @@
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
   }
-  .pe-2 {
-    padding-inline-end: calc(var(--spacing) * 2);
-  }
   .pr-2 {
     padding-right: calc(var(--spacing) * 2);
-  }
-  .pb-2 {
-    padding-bottom: calc(var(--spacing) * 2);
-  }
-  .pl-2 {
-    padding-left: calc(var(--spacing) * 2);
   }
   .text-2xl {
     font-size: var(--text-2xl);
@@ -438,10 +365,6 @@
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
-  .font-medium {
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-  }
   .font-semibold {
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
@@ -452,20 +375,11 @@
   .text-wrap {
     text-wrap: wrap;
   }
-  .overflow-ellipsis {
-    text-overflow: ellipsis;
-  }
   .text-gray-600 {
     color: var(--color-gray-600);
   }
-  .text-red-500 {
-    color: var(--color-red-500);
-  }
   .capitalize {
     text-transform: capitalize;
-  }
-  .italic {
-    font-style: italic;
   }
   .underline {
     text-decoration-line: underline;
@@ -486,20 +400,6 @@
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
-  .group-hover\:absolute {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        position: absolute;
-      }
-    }
-  }
-  .group-hover\:z-10 {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        z-index: 10;
-      }
-    }
-  }
   .group-hover\:block {
     &:is(:where(.group):hover *) {
       @media (hover: hover) {
@@ -512,55 +412,6 @@
       @media (hover: hover) {
         display: none;
       }
-    }
-  }
-  .group-hover\:max-w-xs {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        max-width: var(--container-xs);
-      }
-    }
-  }
-  .group-hover\:overflow-visible {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        overflow: visible;
-      }
-    }
-  }
-  .group-hover\:bg-white {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        background-color: var(--color-white);
-      }
-    }
-  }
-  .group-hover\:p-1 {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        padding: calc(var(--spacing) * 1);
-      }
-    }
-  }
-  .group-hover\:whitespace-normal {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        white-space: normal;
-      }
-    }
-  }
-  .group-hover\:shadow-md {
-    &:is(:where(.group):hover *) {
-      @media (hover: hover) {
-        --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
-        box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-      }
-    }
-  }
-  .last\:border-b-0 {
-    &:last-child {
-      border-bottom-style: var(--tw-border-style);
-      border-bottom-width: 0px;
     }
   }
   .hover\:z-10 {
