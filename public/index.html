@@ -105,7 +105,7 @@
 
             </section>
         </template>
-        <template x-if="unitDetailsArr">
+        <template x-if="unitDetails">
             <aside class="flex flex-col gap-4 w-150 max-w-1/2 p-4 bg-gray-50 rounded shadow-lg h-fit sticky top-5 ">
                 <template x-if="unitDetails.Identity.Rank">
                     <div class="flex gap-2">
@@ -131,26 +131,27 @@
                 <div class="flex items-start gap-4">
                     <img :src="`/static/assets/${unitDetails.Identity.Icon}`" :alt="unitDetails.Identity.GenericName"
                         class="w-40 h-40" />
-                        <div class="flex flex-col gap-2">
-                    <div class="flex gap-2">
-                        <template x-for="resource in ressources">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex gap-2">
+                            <template x-for="resource in ressources">
 
-                            <div class="flex gap-1 items-center">
-                                <img :src="resource.img" alt="" class="w-8 h-8" />
-                                <span x-text="resource.value"></span>
-                            </div>
-                        </template>
-                    </div>
-                    <div class="flex gap-2" x-data="{ techPhase: {
+                                <div class="flex gap-1 items-center">
+                                    <img :src="resource.img" alt="" class="w-8 h-8" />
+                                    <span x-text="resource.value"></span>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="flex gap-2" x-data="{ techPhase: {
                             phase_town: '/static/assets/icons/town_phase.png',
                             phase_city: '/static/assets/icons/city_phase.png',
                         }}">
-                        <template x-for="tech in Object.keys(techPhase)">
-                            <template x-if="unitDetails.Identity.Requirements.Techs.includes(tech)">
-                                <img :src="techPhase[tech]" :alt="tech" class="w-8 h-8" x-show="techPhase[tech]" />
+                            <template x-for="tech in Object.keys(techPhase)">
+                                <template x-if="unitDetails.Identity.Requirements && unitDetails.Identity.Requirements.Techs && 
+                                    unitDetails.Identity.Requirements.Techs.includes(tech)">
+                                    <img :src="techPhase[tech]" :alt="tech" class="w-8 h-8" x-show="techPhase[tech]" />
+                                </template>
                             </template>
-                        </template>
-                    </div>
+                        </div>
                     </div>
 
 
@@ -180,25 +181,22 @@
                             <template x-for="[attackType, attack] of Object.entries(unitDetails.Attack)">
                                 <template x-if="attackType !== 'Slaughter' && !attack.Capture">
                                     <div :key="attackType">
-                                        <p x-text="`${attack.AttackName || attackType}: ${
-                        attack.Damage 
-                            ? [
-                                attack.Damage.Hack ? attack.Damage.Hack + ' hack' : '',
-                                attack.Damage.Pierce ? attack.Damage.Pierce + ' pierce' : '',
-                                attack.Damage.Crush ? attack.Damage.Crush + ' crush' : ''
-                              ].filter(Boolean).join(', ')
-                            : ''
-                    }`"></p>
+                                        <p class="bold" x-text="`${attack.AttackName}:`"></p>
+
+                                        <template x-for="(type, damage) in attack.Damage ">
+                                            <p x-text="`${damage} ${type}`"></p>
+                                        </template>
+
                                         <p x-text="`Range: ${attack.MaxRange}`"></p>
                                         <p x-text="`RepeatTime: ${attack.RepeatTime}`"></p>
                                         <p x-text="`Score: ${
-                                            (
+                                            ( ( (Number(attack.MaxRange) || 1) * 1000 * 
                                                     (
                                                         (Number(attack.Damage.Hack) || 0) +
                                                         (Number(attack.Damage.Pierce) || 0) +
                                                         (Number(attack.Damage.Crush) || 0)
-                                                    ) / (Number(attack.RepeatTime) || 1)
-                                                ).toFixed(3)
+                                                    )) / (Number(attack.RepeatTime) || 1)
+                                                ).toFixed(0)
                                         }`"></p>
                                     </div>
                                 </template>
@@ -207,7 +205,8 @@
                     </template>
                 </div>
 
-                <template x-if="unitDetails.Attack && Object.entries(unitDetails.Attack).some(([attackType, attack]) => attackType === 'Slaughter' || attack.Capture)">
+                <template
+                    x-if="unitDetails.Attack && Object.entries(unitDetails.Attack).some(([attackType, attack]) => attackType === 'Slaughter' || attack.Capture)">
                     <div class="bg-gray-100 p-2 rounded text-sm">
                         <h3 class="font-bold">Special Actions</h3>
                         <div>
@@ -228,10 +227,13 @@
                     </div>
                 </template>
 
-                <div class="bg-gray-100 p-2 rounded text-sm">
-                    <h3 class="font-bold">Movement</h3>
-                    <p x-text="`Speed: ${unitDetails.UnitMotion.WalkSpeed}`"></p>
-                </div>
+                <template x-if="unitDetails.UnitMotion">
+
+                    <div class="bg-gray-100 p-2 rounded text-sm">
+                        <h3 class="font-bold">Movement</h3>
+                        <p x-text="`Speed: ${unitDetails.UnitMotion.WalkSpeed}`"></p>
+                    </div>
+                </template>
             </aside>
         </template>
     </div>
