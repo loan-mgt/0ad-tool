@@ -9,43 +9,7 @@
     <script defer src="/static/script/cdn.min.js"></script>
 </head>
 
-<body class="flex flex-col items-center gap-4 p-4 max-w-screen overflow-x-clip" x-data="{
-        savedCiv: localStorage.getItem('selectedCiv'),
-        unitsClass: {},
-        selectedUnit: null,
-        unitDetails: null,
-        unitDetailsArr: null,
-        displayVersion: 0,
-        ressources: [],
-        async fetchUnits() {
-            try {
-                const response = await fetch(`/civilisations/${this.savedCiv}/units/${this.selectedUnit}`);
-                if (!response.ok) throw new Error('Network response was not ok');
-                this.unitDetailsArr = await response.json();
-                this.displayVersion = 0;
-                this.unitDetails = this.unitDetailsArr[0];
-                this.updateRessources();
-            } catch (error) {
-                console.error('Error fetching units:', error);
-                this.unitDetailsArr = null;
-            }
-        },
-        setDisplayVersion(version) {
-            this.displayVersion = version;
-            if (this.unitDetailsArr && this.unitDetailsArr.length > 0) {
-                this.unitDetails = this.unitDetailsArr[version];
-            }
-        },
-        updateRessources() {
-            this.ressources = [
-                { img: '/static/assets/icons/population.png', value: this.unitDetails.Cost.Population || 0 },
-                { img: '/static/assets/icons/food.png', value: this.unitDetails.Cost.Resources.food || 0 },
-                { img: '/static/assets/icons/wood.png', value: this.unitDetails.Cost.Resources.wood || 0 },
-                { img: '/static/assets/icons/metal.png', value: this.unitDetails.Cost.Resources.metal || 0 },
-            ];
-        }
-    }" x-init="$watch('savedCiv', () => $dispatch('update-civ'));
-    $watch('selectedUnit', () => {fetchUnits(); console.log('Unit selected:', selectedUnit)});">
+<body class="flex flex-col items-center gap-4 p-4 max-w-screen overflow-x-clip" x-data="unitComponent()" x-init="init()">
     <header>
         <h1 class="text-2xl">0 A.D. Helper Tool</h1>
         <p>Choose your civilisation and explore all units. Click a unit to see its stats.</p>
