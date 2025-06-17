@@ -1,53 +1,53 @@
 const api = "";
 
-function unitComponent() {
+function civUnitBrowser() {
     return {
-        savedCiv: localStorage.getItem('selectedCiv'),
-        unitsClass: {},
-        selectedUnit: null,
-        unitDetailsArr: [],
-        unitDetails: null,
-        displayVersion: 0,
-        ressources: [],
+        selectedCivilisation: localStorage.getItem('selectedCiv'),
+        unitGroups: {},
+        activeUnitCode: null,
+        unitVariants: [],
+        currentUnit: null,
+        currentVariantIndex: 0,
+        resourceCosts: [],
 
-        async init() {
-            this.$watch('savedCiv', async () => {
-                await this.loadUnits();
+        async initialize() {
+            this.$watch('selectedCivilisation', async () => {
+                await this.loadUnitsForCivilisation();
             });
 
-            this.$watch('selectedUnit', () => {
-                this.fetchUnitDetails();
+            this.$watch('activeUnitCode', () => {
+                this.loadUnitVariantDetails();
             });
 
-            if (this.savedCiv) {
-                await this.loadUnits();
+            if (this.selectedCivilisation) {
+                await this.loadUnitsForCivilisation();
             }
         },
 
-        async loadUnits() {
-            const response = await fetch(`/civilisations/${this.savedCiv}/units`);
-            this.unitsClass = await response.json();
+        async loadUnitsForCivilisation() {
+            const response = await fetch(`/civilisations/${this.selectedCivilisation}/units`);
+            this.unitGroups = await response.json();
         },
 
-        async fetchUnitDetails() {
-            const res = await fetch(`/civilisations/${this.savedCiv}/units/${this.selectedUnit}`);
-            this.unitDetailsArr = await res.json();
-            this.displayVersion = 0;
-            this.unitDetails = this.unitDetailsArr[0];
-            this.setRessources();
+        async loadUnitVariantDetails() {
+            const res = await fetch(`/civilisations/${this.selectedCivilisation}/units/${this.activeUnitCode}`);
+            this.unitVariants = await res.json();
+            this.currentVariantIndex = 0;
+            this.currentUnit = this.unitVariants[0];
+            this.updateResourceCosts();
         },
 
-        setDisplayVersion(version) {
-            this.displayVersion = version;
-            this.unitDetails = this.unitDetailsArr[version];
-            this.setRessources();
+        switchUnitVariant(variantIdx) {
+            this.currentVariantIndex = variantIdx;
+            this.currentUnit = this.unitVariants[variantIdx];
+            this.updateResourceCosts();
         },
 
-        setRessources() {
-            const cost = this.unitDetails.Cost || {};
+        updateResourceCosts() {
+            const cost = this.currentUnit.Cost || {};
             const resources = cost.Resources || {};
 
-            this.ressources = [
+            this.resourceCosts = [
                 { img: '/static/assets/icons/population.png', value: cost.Population || 0 },
                 { img: '/static/assets/icons/food.png', value: resources.food || 0 },
                 { img: '/static/assets/icons/wood.png', value: resources.wood || 0 },
