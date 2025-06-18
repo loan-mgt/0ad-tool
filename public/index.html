@@ -9,7 +9,8 @@
     <script defer src="/static/script/cdn.min.js"></script>
 </head>
 
-<body class="flex flex-col items-center gap-4 p-4 max-w-screen overflow-x-clip" x-data="civUnitBrowser()" x-init="initialize()">
+<body class="flex flex-col items-center gap-4 p-4 max-w-screen overflow-x-clip" x-data="civUnitBrowser()"
+    x-init="initialize()">
     <header>
         <h1 class="text-2xl">0 A.D. Helper Tool</h1>
         <p>Choose your civilisation and explore all units. Click a unit to see its stats.</p>
@@ -70,13 +71,13 @@
             </section>
         </template>
         <template x-if="currentUnit">
-            <aside class="flex flex-col gap-4 w-150 max-w-1/2 p-4 bg-gray-50 rounded shadow-lg h-fit sticky top-5 ">
+            <aside class="flex flex-col gap-4 w-150 max-w-1/2 p-4 bg-gray-50 rounded shadow-lg h-fit sticky top-0 ">
                 <template x-if="currentUnit.Identity.Rank">
                     <div class="flex gap-2">
                         <template x-for="(rank, idx) in ['Basic', 'Advanced', 'Elite']">
                             <button :class="idx === currentVariantIndex && 'bg-gray-400'"
-                                class="bg-gray-200 rounded p-1 cursor-pointer"
-                                @click="switchUnitVariant(idx);" x-text="rank"></button>
+                                class="bg-gray-200 rounded p-1 cursor-pointer" @click="switchUnitVariant(idx);"
+                                x-text="rank"></button>
                         </template>
                     </div>
 
@@ -131,20 +132,21 @@
                         </p>
                     </div>
                 </div>
-                <div class="bg-gray-100 p-2 rounded text-sm">
-                    <h3 class="font-bold">Attack</h3>
-                    <template x-if="currentUnit.Attack">
-                        <div>
-                            <template x-for="[attackType, attack] of Object.entries(currentUnit.Attack)">
-                                <template x-if="attackType !== 'Slaughter' && !attack.Capture">
-                                    <div :key="attackType">
-                                        <p class="bold" x-text="`${attack.AttackName}:`"></p>
-                                        <template x-for="(type, damage) in attack.Damage ">
+
+                <template x-if="currentUnit.Attack">
+                    <template x-for="[attackType, attack] of Object.entries(currentUnit.Attack)">
+                        <template x-if="attackType !== 'Slaughter' && !attack.Capture">
+                            <div :key="attackType" class="bg-gray-100 p-2 rounded text-sm">
+                                    <div class="flex gap-2">
+                                        <h3 class="font-bold" x-text="`${attack.AttackName} Attack:`"></h3>
+                                        <template
+                                            x-for="[type, damage] in Object.entries(attack.Damage).sort((a, b) => b[1] - a[1])">
                                             <p x-text="`${damage} ${type}`"></p>
                                         </template>
-                                        <p x-text="`Range: ${attack.MaxRange}`"></p>
-                                        <p x-text="`RepeatTime: ${attack.RepeatTime}`"></p>
-                                        <p x-text="`Score: ${
+                                    </div>
+                                    <p x-text="`Range: ${attack.MaxRange}`"></p>
+                                    <p x-text="`RepeatTime: ${attack.RepeatTime}`"></p>
+                                    <p x-text="`Score: ${
                                             ( ( (Number(attack.MaxRange) || 1) * 1000 * 
                                                     (
                                                         (Number(attack.Damage.Hack) || 0) +
@@ -153,12 +155,10 @@
                                                     )) / (Number(attack.RepeatTime) || 1)
                                                 ).toFixed(0)
                                         }`"></p>
-                                    </div>
-                                </template>
-                            </template>
-                        </div>
+                            </div>
+                        </template>
                     </template>
-                </div>
+                </template>
                 <template
                     x-if="currentUnit.Attack && Object.entries(currentUnit.Attack).some(([attackType, attack]) => attackType === 'Slaughter' || attack.Capture)">
                     <div class="bg-gray-100 p-2 rounded text-sm">
